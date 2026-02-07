@@ -1,15 +1,16 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React from "react";
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "./Routes/AppRoutes";
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
-
   return (
-    <div className="main">
-      <h1 class="text-3xl font-bold underline">Hello world!</h1>
-    </div>
+    <Router>
+      <div className="main">
+        
+        <AppRoutes />
+      </div>
+    </Router>
   );
 }
 
