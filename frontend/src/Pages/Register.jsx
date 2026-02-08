@@ -1,8 +1,81 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
+
+// API Configuration
+const api = axios.create({
+  baseURL: "http://127.0.0.1:8000",
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
 const Register = () => {
-  const handleNoOp = (e) => e.preventDefault();
+  const navigate = useNavigate();
+
+  // State for form data
+  const [formData, setFormData] = useState({
+    full_name: "",
+    company: "",
+    username: "",
+    email: "",
+    password: "",
+    confirm_password: "",
+  });
+
+  // State for UI feedback
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Handle Input Changes
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    // 1. Password Match Check
+    if (formData.password !== formData.confirm_password) {
+      setError("Passwords do not match");
+      setLoading(false);
+      return;
+    }
+
+    try {
+      console.log("Sending data...", formData);
+
+      const payload = {
+        name: formData.full_name, // Map UI 'full_name' to Backend 'name'
+        company: formData.company,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      };
+
+      // 2. Send Request
+      await api.post("/api/users", payload);
+
+      console.log("Registration success! Redirecting to login...");
+
+      // 3. Redirect to Login
+      navigate("/login");
+
+    } catch (err) {
+      console.error(err);
+      if (err.response) {
+        // Display backend error message
+        setError(err.response.data.detail || "Error occurred during registration");
+      } else {
+        setError("Network Error. Is the backend running?");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black flex overflow-hidden font-sans selection:bg-purple-500/30">
@@ -27,7 +100,7 @@ const Register = () => {
           }}
         />
 
-        {/* NEW: Electric Blue Spot (Top Right) */}
+        {/* Electric Blue Spot (Top Right) */}
         <div 
           className="absolute top-[5%] right-[10%] w-[30%] h-[40%] opacity-20 blur-[90px]"
           style={{
@@ -35,7 +108,7 @@ const Register = () => {
           }}
         />
 
-        {/* NEW: Subtle Crimson Edge (Middle Left) */}
+        {/* Subtle Crimson Edge (Middle Left) */}
         <div 
           className="absolute top-[40%] left-[-5%] w-[20%] h-[30%] opacity-15 blur-[80px]"
           style={{
@@ -43,7 +116,7 @@ const Register = () => {
           }}
         />
 
-        {/* NEW: Deep Royal Blue (Bottom Center) */}
+        {/* Deep Royal Blue (Bottom Center) */}
         <div 
           className="absolute bottom-[-10%] left-[30%] w-[40%] h-[40%] opacity-20 blur-[100px]"
           style={{
@@ -84,42 +157,16 @@ const Register = () => {
                 </p>
               </div>
 
-              <form onSubmit={handleNoOp} className="space-y-5">
-                {/* PROFILE PICTURE UPLOAD */}
-                <div className="flex justify-center mb-6">
-                  <div className="relative group cursor-pointer">
-                    <div className="w-24 h-24 rounded-full bg-white/[0.05] border border-white/10 flex items-center justify-center overflow-hidden transition-all group-hover:border-white/30 group-hover:bg-white/[0.08] shadow-[0_0_30px_rgba(0,0,0,0.5)]">
-                      {/* Icon */}
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="h-8 w-8 text-white/50 group-hover:text-white/80 transition-colors"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                        strokeWidth={1.5}
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"
-                        />
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"
-                        />
-                      </svg>
-
-                      {/* Overlay Text */}
-                      <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                        <span className="text-[10px] uppercase font-bold text-white tracking-widest">
-                          Upload
-                        </span>
-                      </div>
-                    </div>
-                    <input type="file" accept="image/*" className="hidden" />
-                  </div>
+              {/* ERROR ALERT BOX */}
+              {error && (
+                <div className="mb-6 p-4 rounded-xl bg-red-500/10 border border-red-500/20 text-red-200 text-sm">
+                  {error}
                 </div>
+              )}
+
+              <form onSubmit={handleSubmit} className="space-y-5">
+                
+                {/* REMOVED PROFILE PICTURE UPLOAD (As per previous request) */}
 
                 {/* Form Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -129,6 +176,9 @@ const Register = () => {
                     </label>
                     <input
                       type="text"
+                      name="full_name"
+                      value={formData.full_name}
+                      onChange={handleChange}
                       placeholder="John Doe"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                     />
@@ -139,6 +189,9 @@ const Register = () => {
                     </label>
                     <input
                       type="text"
+                      name="company"
+                      value={formData.company}
+                      onChange={handleChange}
                       placeholder="Acme Corp"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                     />
@@ -151,6 +204,10 @@ const Register = () => {
                   </label>
                   <input
                     type="text"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleChange}
+                    required
                     placeholder="Enter username"
                     className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                   />
@@ -162,6 +219,10 @@ const Register = () => {
                   </label>
                   <input
                     type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    required
                     placeholder="email@example.com"
                     className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                   />
@@ -174,6 +235,10 @@ const Register = () => {
                     </label>
                     <input
                       type="password"
+                      name="password"
+                      value={formData.password}
+                      onChange={handleChange}
+                      required
                       placeholder="••••••••"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                     />
@@ -184,6 +249,10 @@ const Register = () => {
                     </label>
                     <input
                       type="password"
+                      name="confirm_password"
+                      value={formData.confirm_password}
+                      onChange={handleChange}
+                      required
                       placeholder="••••••••"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                     />
@@ -193,6 +262,7 @@ const Register = () => {
                 {/* GLASS SUBMIT BUTTON */}
                 <button
                   type="submit"
+                  disabled={loading}
                   className="
                     w-full mt-6 py-3.5 rounded-xl
                     bg-white/10 backdrop-blur-md
@@ -204,7 +274,7 @@ const Register = () => {
                     shadow-[0_0_30px_rgba(255,255,255,0.05)]
                   "
                 >
-                  Create Account
+                  {loading ? "Processing..." : "Create Account"}
                 </button>
               </form>
 
