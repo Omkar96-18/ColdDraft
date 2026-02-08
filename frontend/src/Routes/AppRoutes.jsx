@@ -4,6 +4,7 @@ import Login from "../Pages/Login";
 import Register from "../Pages/Register";
 import Home from "../Pages/Home";
 import ProtectedRoute from "./ProtectedRoute";
+import CreateCampaign from "../Pages/CreateCampaign";
 
 const AppRoutes = () => {
   return (
@@ -18,6 +19,15 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <Home />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/campaigns/new"
+        element={
+          <ProtectedRoute>
+            <CreateCampaign />
           </ProtectedRoute>
         }
       />

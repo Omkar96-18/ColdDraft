@@ -2,10 +2,12 @@ from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional, Union
 
+# --- Base Schema ---
 class CampaignBase(BaseModel):
     name: str
     description: Optional[str] = None
-    status: Optional[str] = "draft"
+    # REMOVED: status: Optional[str] = "draft" (This was causing the crash)
+    banner_url: Optional[str] = None # Added this so frontend can send it
 
 # --- Create Schemas ---
 class SalesCampaignCreate(CampaignBase):
@@ -35,6 +37,7 @@ class CampaignResponse(CampaignBase):
     user_id: int
     type: str
     created_at: datetime
+    
     model_config = ConfigDict(from_attributes=True)
 
 class SalesCampaignResponse(CampaignResponse):

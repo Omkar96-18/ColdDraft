@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from typing import Union, List, Optional, Any
+from typing import Union, List, Any
 from . import models, schemas
 
 def create_campaign(
@@ -7,6 +7,7 @@ def create_campaign(
     campaign: Union[schemas.SalesCampaignCreate, schemas.HiringCampaignCreate, schemas.NetworkingCampaignCreate], 
     user_id: int
 ) -> Any:
+    # dump model to dict
     data = campaign.model_dump()
     data["user_id"] = user_id
     
@@ -17,7 +18,15 @@ def create_campaign(
         "networking": models.NetworkingCampaign
     }
     
-    model_class = type_mapping.get(data["type"], models.Campaign)
+    # Select the correct model class
+    model_class = type_mapping.get(data["type"])
+    
+    if not model_class:
+        # Fallback if type is invalid (should be caught by Pydantic though)
+        raise ValueError(f"Invalid campaign type: {data.get('type')}")
+
+    # Create DB Item
+    # IMPORTANT: 'data' dict must exactly match columns in the model_class
     db_item = model_class(**data)
         
     db.add(db_item)
@@ -26,7 +35,6 @@ def create_campaign(
     return db_item
 
 def get_campaigns_by_user(db: Session, user_id: int, skip: int = 0, limit: int = 100) -> List[models.Campaign]:
-    # Security: .filter(user_id) ensures users only see their own data
     return db.query(models.Campaign)\
              .filter(models.Campaign.user_id == user_id)\
              .offset(skip).limit(limit).all()
@@ -39,4 +47,5 @@ def delete_campaign(db: Session, campaign_id: int, user_id: int):
     if db_item:
         db.delete(db_item)
         db.commit()
-    return db_item
+        return True
+    return False

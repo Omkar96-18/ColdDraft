@@ -11,6 +11,10 @@ class Campaign(Base):
     name = Column(String, nullable=False)
     type = Column(String, nullable=False)  # sales | hiring | networking
     description = Column(String)
+    
+    # Fixed: Removed duplicate definition and type hint clutter for SQLAlchemy
+    banner_url = Column(String, nullable=True, default="https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80")
+    
     created_at = Column(DateTime, default=datetime.utcnow)
 
     __mapper_args__ = {

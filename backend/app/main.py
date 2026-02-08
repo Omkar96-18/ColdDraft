@@ -5,14 +5,16 @@ from app.core.database import engine, Base
 from app.users.routes import router as user_router
 from app.campaigns.routes import router as campaign_router
 
-# Initialize Database Tables
-Base.metadata.create_all(bind=engine)
-
 app = FastAPI(
     title="Offline Outreach Engine",
     description="Backend API for managing specialized outreach campaigns",
     version="1.0.0"
 )
+
+# --- Startup Event ---
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
 
 # --- Middleware (CORS) ---
 app.add_middleware(
@@ -27,8 +29,7 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Router Registration ---
-# FIX: Explicitly set the full path here for both
+# --- Routers ---
 app.include_router(user_router, prefix="/api/users", tags=["Users"])
 app.include_router(campaign_router, prefix="/api/campaigns", tags=["Campaigns"])
 
