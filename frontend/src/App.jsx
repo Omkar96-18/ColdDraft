@@ -1,13 +1,17 @@
-import { useState } from "react";
-import Sender from "./pages/Features/Sender";
+
+import "./App.css";
+import { BrowserRouter as Router} from "react-router-dom"
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
 
-
   return (
-    <div>
-      <Sender/>
-    </div>
+    <Router>
+      <div className="main">
+        
+        <AppRoutes />
+      </div>
+    </Router>
   );
 }
 
