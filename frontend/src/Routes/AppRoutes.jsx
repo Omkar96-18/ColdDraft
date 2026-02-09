@@ -5,6 +5,8 @@ import Register from "../Pages/Register";
 import Home from "../Pages/Home";
 import ProtectedRoute from "./ProtectedRoute";
 import CreateCampaign from "../Pages/CreateCampaign";
+import CampaignDetail from "../Pages/CampaignDetail";
+import ProspectDetail from "../Pages/ProspectDetail"; // Ensure this import is correct
 
 const AppRoutes = () => {
   return (
@@ -28,6 +30,25 @@ const AppRoutes = () => {
         element={
           <ProtectedRoute>
             <CreateCampaign />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/campaigns/:id"
+        element={
+          <ProtectedRoute>
+            <CampaignDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* --- NEW ROUTE ADDED HERE --- */}
+      <Route
+        path="/prospects/:id"
+        element={
+          <ProtectedRoute>
+            <ProspectDetail />
           </ProtectedRoute>
         }
       />

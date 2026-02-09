@@ -2,54 +2,35 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../api";
 
-// --- REUSABLE COMPONENTS ---
-const Sidebar = ({ currentPath }) => {
-  const navigate = useNavigate();
-  
-  return (
-    <aside className="w-20 lg:w-64 border-r border-white/5 bg-black/20 backdrop-blur-3xl h-screen flex flex-col items-center lg:items-start p-6 z-20 fixed left-0 top-0">
-      <div className="h-10 w-10 rounded-xl bg-white text-black flex items-center justify-center font-black text-xl shadow-lg mb-12">
-        O
-      </div>
-      <nav className="flex-1 space-y-6 w-full">
-        {/* Fixed: Made Dashboard Clickable */}
-        <div 
-          onClick={() => navigate('/')}
-          className={`cursor-pointer transition-all text-xs font-bold uppercase tracking-widest text-center lg:text-left ${currentPath === '/' ? 'text-white' : 'text-zinc-500 hover:text-white'}`}
-        >
-          Dashboard
-        </div>
-        
-        <div className="text-white bg-white/10 p-3 rounded-xl cursor-pointer transition-all text-xs font-bold uppercase tracking-widest text-center lg:text-left">
-          Launch New
-        </div>
-      </nav>
-    </aside>
-  );
-};
+// ... (Sidebar component remains the same) ...
 
 const CreateCampaign = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   
-  // State for all form data
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     banner_url: "",
     type: "sales", 
+    
+    // Sales specific
     product_name: "",
     product_price: "",
-    product_desc: "",
+    product_desc: "", // Added
     landing_url: "",
+    
+    // Hiring specific
     role_title: "",
     experience_years: "",
     location: "",
     skills_required: "",
+    
+    // Networking specific
     purpose: "",
     target_industry: "",
-    intro_context: "",
-    relationship_goal: ""
+    intro_context: "", // Added to UI
+    relationship_goal: "" // Added
   });
 
   const handleChange = (e) => {
@@ -60,7 +41,6 @@ const CreateCampaign = () => {
     e.preventDefault();
     setLoading(true);
 
-    // 1. Construct Payload
     let payload = {
       name: formData.name,
       description: formData.description,
@@ -68,12 +48,12 @@ const CreateCampaign = () => {
       banner_url: formData.banner_url || "https://images.unsplash.com/photo-1635322966219-b75ed372eb01?q=80&w=1000&auto=format&fit=crop",
     };
 
-    // 2. Attach specific fields
     if (formData.type === "sales") {
       payload = { 
         ...payload, 
         product_name: formData.product_name, 
         product_price: Number(formData.product_price), 
+        product_desc: formData.product_desc, // Included in payload
         landing_url: formData.landing_url 
       };
     } else if (formData.type === "hiring") {
@@ -88,31 +68,19 @@ const CreateCampaign = () => {
       payload = { 
         ...payload, 
         purpose: formData.purpose, 
-        target_industry: formData.target_industry,
-        intro_context: formData.intro_context
+        target_industry: formData.target_industry, 
+        intro_context: formData.intro_context, // Included in payload
+        relationship_goal: formData.relationship_goal // Included in payload
       };
     }
 
     try {
-      // FIX: Explicitly get token to prevent 401 redirects
       const token = localStorage.getItem("token") || localStorage.getItem("access_token"); 
-      
-      const config = {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      };
-
-      // Send request with config
+      const config = { headers: { Authorization: `Bearer ${token}` } };
       await api.post("/api/campaigns/", payload, config);
-      
-      // Success! Navigate to Home/Dashboard
-      // Note: If "/" is your login page, change this to "/dashboard"
       navigate("/home"); 
-
     } catch (err) {
       console.error("Error creating campaign:", err);
-      // If error is 401, the user session is actually expired
       if(err.response && err.response.status === 401) {
           alert("Session expired. Please login again.");
           navigate("/login");
@@ -126,39 +94,51 @@ const CreateCampaign = () => {
 
   return (
     <div className="flex min-h-screen bg-[#020202] text-zinc-200 font-sans selection:bg-blue-500/30">
-      <Sidebar currentPath="/create" />
+      {/* Assuming Sidebar is imported or defined above */}
+      {/* <Sidebar currentPath="/create" /> */} 
+      {/* Placeholder for Sidebar if defined in same file, otherwise import it */}
+      <aside className="w-20 lg:w-64 border-r border-white/5 bg-black/20 backdrop-blur-3xl h-screen flex flex-col items-center lg:items-start p-6 z-20 fixed left-0 top-0">
+         {/* ... Sidebar Content ... */}
+         <div className="h-10 w-10 rounded-xl bg-white text-black flex items-center justify-center font-black text-xl shadow-lg mb-12">O</div>
+         <nav className="flex-1 space-y-6 w-full">
+            <div onClick={() => navigate('/home')} className="cursor-pointer text-zinc-500 hover:text-white transition-all text-xs font-bold uppercase tracking-widest text-center lg:text-left">Dashboard</div>
+            <div className="text-white bg-white/10 p-3 rounded-xl cursor-pointer ring-1 ring-white/20 text-xs font-bold uppercase tracking-widest text-center lg:text-left">Launch New</div>
+         </nav>
+      </aside>
 
       <main className="flex-1 ml-20 lg:ml-64 p-8 lg:p-12 relative">
-        {/* Background Ambience */}
         <div className="fixed top-[-10%] left-[20%] w-[40%] h-[40%] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none" />
         <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto grid grid-cols-1 xl:grid-cols-2 gap-16 relative z-10">
           
-          {/* --- LEFT COLUMN: THE FORM --- */}
           <div className="space-y-8">
+            {/* --- BACK TO HOME BUTTON --- */}
+            <button 
+              onClick={() => navigate('/home')}
+              className="group flex items-center gap-2 text-zinc-500 hover:text-white transition-colors mb-4"
+            >
+              <span className="text-lg group-hover:-translate-x-1 transition-transform">←</span>
+              <span className="text-xs font-bold uppercase tracking-widest">Back to Home</span>
+            </button>
+
             <div>
               <h1 className="text-4xl font-black tracking-tighter text-white mb-2">Create Campaign</h1>
               <p className="text-zinc-500 text-sm font-medium">Define your outreach strategy and target audience.</p>
             </div>
 
             <form id="campaignForm" onSubmit={handleSubmit} className="space-y-8">
-              
-              {/* SECTION 1: BASE INFO */}
               <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-6">
                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">1. Base Configuration</h3>
-                
                 <div className="space-y-4">
                   <div>
                     <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Campaign Name</label>
                     <input name="name" required value={formData.name} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700" placeholder="e.g. Q3 Enterprise Sales" />
                   </div>
-
                   <div>
                     <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Banner Image URL</label>
                     <input name="banner_url" value={formData.banner_url} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500/50 transition-all placeholder:text-zinc-700" placeholder="https://..." />
                   </div>
-
                   <div>
                     <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Description</label>
                     <textarea name="description" value={formData.description} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:outline-none focus:border-blue-500/50 transition-all h-24 resize-none placeholder:text-zinc-700" placeholder="Brief summary of this campaign..." />
@@ -166,7 +146,6 @@ const CreateCampaign = () => {
                 </div>
               </div>
 
-              {/* SECTION 2: TYPE SELECTION */}
               <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 space-y-6">
                  <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-400">2. Campaign Strategy</h3>
                  <div className="grid grid-cols-3 gap-3">
@@ -183,10 +162,10 @@ const CreateCampaign = () => {
                  </div>
               </div>
 
-              {/* SECTION 3: DYNAMIC FIELDS */}
               <div className="p-6 rounded-[2rem] bg-gradient-to-b from-blue-500/5 to-purple-500/5 border border-white/10 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <h3 className="text-xs font-black uppercase tracking-[0.2em] text-blue-400">3. {formData.type} Details</h3>
                 
+                {/* --- SALES FIELDS --- */}
                 {formData.type === 'sales' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="col-span-2">
@@ -201,9 +180,15 @@ const CreateCampaign = () => {
                        <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Landing Page</label>
                        <input name="landing_url" required value={formData.landing_url} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50" />
                     </div>
+                    {/* ADDED: Product Description */}
+                    <div className="col-span-2">
+                       <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Product Description</label>
+                       <textarea name="product_desc" value={formData.product_desc} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50 h-20 resize-none" placeholder="Key value propositions..." />
+                    </div>
                   </div>
                 )}
 
+                {/* --- HIRING FIELDS --- */}
                 {formData.type === 'hiring' && (
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="col-span-2">
@@ -225,23 +210,33 @@ const CreateCampaign = () => {
                   </div>
                 )}
 
+                {/* --- NETWORKING FIELDS --- */}
                 {formData.type === 'networking' && (
-                  <div className="space-y-4">
-                    <div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="col-span-2">
                        <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Primary Purpose</label>
                        <input name="purpose" required value={formData.purpose} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50" />
                     </div>
-                    <div>
+                    <div className="col-span-2">
                        <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Target Industry</label>
                        <input name="target_industry" required value={formData.target_industry} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50" />
+                    </div>
+                    {/* ADDED: Intro Context */}
+                    <div className="col-span-2">
+                       <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Intro Context</label>
+                       <input name="intro_context" value={formData.intro_context} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50" placeholder="e.g. Met at TechCrunch, Reference from John Doe" />
+                    </div>
+                    {/* ADDED: Relationship Goal */}
+                    <div className="col-span-2">
+                       <label className="text-[10px] uppercase font-bold text-zinc-500 tracking-widest block mb-2">Relationship Goal</label>
+                       <input name="relationship_goal" value={formData.relationship_goal} onChange={handleChange} className="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-white focus:border-blue-500/50" placeholder="e.g. Partnership partnership, Mentorship" />
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* ACTION BUTTONS */}
               <div className="flex gap-4 pt-4">
-                  <button type="button" onClick={() => navigate('/')} className="px-8 py-4 rounded-full border border-white/10 text-white font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition-all">Cancel</button>
+                  <button type="button" onClick={() => navigate('/home')} className="px-8 py-4 rounded-full border border-white/10 text-white font-bold uppercase tracking-widest text-xs hover:bg-white/5 transition-all">Cancel</button>
                   <button type="submit" disabled={loading} className="flex-1 py-4 rounded-full bg-white text-black font-black uppercase tracking-widest text-xs hover:scale-[1.02] active:scale-[0.98] transition-all shadow-[0_0_40px_rgba(255,255,255,0.2)]">
                       {loading ? "Creating..." : "Initialize Campaign"}
                   </button>
@@ -249,13 +244,10 @@ const CreateCampaign = () => {
             </form>
           </div>
 
-          {/* --- RIGHT COLUMN: LIVE PREVIEW --- */}
           <div className="hidden xl:block relative">
             <div className="sticky top-12">
                <h3 className="text-xs font-black uppercase tracking-[0.2em] text-zinc-500 mb-8 text-center">Live Preview</h3>
-               
                <div className="w-[400px] mx-auto group relative bg-gradient-to-br from-white/[0.07] to-white/[0.01] border border-white/[0.08] rounded-[2.5rem] p-6 shadow-2xl backdrop-blur-xl">
-                 {/* Image Area */}
                  <div className="h-56 overflow-hidden rounded-[2rem] relative shadow-lg mb-6 bg-black">
                      <img 
                        src={formData.banner_url || "https://images.unsplash.com/photo-1635322966219-b75ed372eb01?q=80&w=1000&auto=format&fit=crop"} 
@@ -269,7 +261,6 @@ const CreateCampaign = () => {
                      </div>
                  </div>
 
-                 {/* Content Area */}
                  <div className="px-2">
                      <h2 className="text-3xl font-bold text-white mb-2 tracking-tight break-words leading-tight">
                        {formData.name || "Campaign Name"}
@@ -278,22 +269,28 @@ const CreateCampaign = () => {
                        {formData.description || "Your campaign description will appear here..."}
                      </p>
 
-                     {/* Dynamic Stats Preview */}
                      <div className="pt-6 border-t border-white/10 grid grid-cols-2 gap-4">
                         {formData.type === 'sales' && (
-                           <>
-                               <div><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Product</p><p className="text-white font-bold text-sm truncate">{formData.product_name || "-"}</p></div>
-                               <div className="text-right"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Price</p><p className="text-emerald-400 font-bold text-sm">{formData.product_price ? `$${formData.product_price}` : "-"}</p></div>
-                           </>
+                            <>
+                                <div><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Product</p><p className="text-white font-bold text-sm truncate">{formData.product_name || "-"}</p></div>
+                                <div className="text-right"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Price</p><p className="text-emerald-400 font-bold text-sm">{formData.product_price ? `₹${formData.product_price}` : "-"}</p></div>
+                                {/* ADDED: Preview Product Desc */}
+                                <div className="col-span-2 pt-2"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Product Details</p><p className="text-zinc-400 text-xs line-clamp-2">{formData.product_desc || "-"}</p></div>
+                            </>
                         )}
                         {formData.type === 'hiring' && (
-                           <>
-                               <div><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Role</p><p className="text-white font-bold text-sm truncate">{formData.role_title || "-"}</p></div>
-                               <div className="text-right"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Experience</p><p className="text-blue-400 font-bold text-sm">{formData.experience_years ? `${formData.experience_years} Yrs` : "-"}</p></div>
-                           </>
+                            <>
+                                <div><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Role</p><p className="text-white font-bold text-sm truncate">{formData.role_title || "-"}</p></div>
+                                <div className="text-right"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Experience</p><p className="text-blue-400 font-bold text-sm">{formData.experience_years ? `${formData.experience_years} Yrs` : "-"}</p></div>
+                            </>
                         )}
                         {formData.type === 'networking' && (
-                           <div className="col-span-2"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Target Industry</p><p className="text-white font-bold text-sm">{formData.target_industry || "-"}</p></div>
+                           <>
+                               <div className="col-span-2"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Target Industry</p><p className="text-white font-bold text-sm">{formData.target_industry || "-"}</p></div>
+                               {/* ADDED: Preview Context & Goal */}
+                               <div className="col-span-2 pt-2"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Context</p><p className="text-zinc-400 text-xs line-clamp-2">{formData.intro_context || "-"}</p></div>
+                               <div className="col-span-2 pt-2"><p className="text-[9px] uppercase text-zinc-600 font-bold tracking-widest">Goal</p><p className="text-purple-400 text-xs font-bold">{formData.relationship_goal || "-"}</p></div>
+                           </>
                         )}
                      </div>
                  </div>

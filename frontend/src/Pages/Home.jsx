@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import api from "../api";
 
 // --- REUSABLE COMPONENTS ---
+
 const Sidebar = ({ user, onLogout }) => (
   <aside className="w-20 lg:w-64 border-r border-white/5 bg-black/20 backdrop-blur-3xl h-screen flex flex-col items-center lg:items-start p-6 z-20 fixed left-0 top-0">
     <div className="flex items-center gap-3 mb-12">
@@ -36,10 +37,14 @@ const Sidebar = ({ user, onLogout }) => (
   </aside>
 );
 
-const CampaignCard = ({ campaign, onDelete }) => (
-  <div className="group relative bg-gradient-to-br from-white/[0.07] to-white/[0.01] border border-white/[0.08] rounded-[2.5rem] p-4 transition-all duration-500 hover:border-white/[0.2] hover:bg-white/[0.08] hover:-translate-y-2">
+// UPDATED: Added onClick prop to enable navigation when clicking the card
+const CampaignCard = ({ campaign, onClick, onDelete }) => (
+  <div 
+    onClick={() => onClick(campaign.id)}
+    className="group relative bg-gradient-to-br from-white/[0.07] to-white/[0.01] border border-white/[0.08] rounded-[2.5rem] p-4 transition-all duration-500 hover:border-white/[0.2] hover:bg-white/[0.08] hover:-translate-y-2 cursor-pointer"
+  >
     
-    {/* --- NEW: Image Section --- */}
+    {/* Image Section */}
     <div className="h-48 w-full overflow-hidden rounded-[2rem] relative mb-6 shadow-lg bg-black">
         <img 
             src={campaign.banner_url || "https://images.unsplash.com/photo-1557683316-973673baf926?auto=format&fit=crop&q=80"} 
@@ -47,17 +52,17 @@ const CampaignCard = ({ campaign, onDelete }) => (
             className="w-full h-full object-cover opacity-80 group-hover:scale-105 group-hover:opacity-100 transition-all duration-700"
         />
         
-        {/* Type Badge (Overlaid on Image) */}
+        {/* Type Badge */}
         <div className="absolute top-4 left-4">
             <span className="px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest backdrop-blur-md border border-white/20 bg-black/50 text-white shadow-xl">
                 {campaign.type}
             </span>
         </div>
 
-        {/* Delete Button (Overlaid on Image) */}
+        {/* Delete Button */}
         <button
             onClick={(e) => {
-                e.stopPropagation(); // Prevent triggering card click if you add one later
+                e.stopPropagation(); // Prevents navigation when clicking delete
                 onDelete(campaign.id);
             }}
             className="absolute top-4 right-4 w-8 h-8 rounded-full bg-black/50 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:bg-red-500/20 hover:border-red-500/50 hover:text-red-400"
@@ -113,10 +118,11 @@ const Home = () => {
         const token = localStorage.getItem("token") || localStorage.getItem("access_token");
         if (!token) throw new Error("No token");
 
-        // Assuming your API helper handles headers, if not, add { headers: { Authorization: `Bearer ${token}` } }
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        
         const [userRes, campaignRes] = await Promise.all([
-          api.get("/api/users/me"),
-          api.get("/api/campaigns/"),
+          api.get("/api/users/me", config),
+          api.get("/api/campaigns/", config),
         ]);
         
         setUser(userRes.data);
@@ -140,7 +146,8 @@ const Home = () => {
   const handleDelete = async (id) => {
     if (!window.confirm("Delete this campaign?")) return;
     try {
-      await api.delete(`/api/campaigns/${id}`);
+      const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+      await api.delete(`/api/campaigns/${id}`, { headers: { Authorization: `Bearer ${token}` } });
       setCampaigns(campaigns.filter((c) => c.id !== id));
     } catch (err) {
       console.error("Delete failed", err);
@@ -180,7 +187,8 @@ const Home = () => {
               </div>
             </div>
             <button
-              onClick={() => navigate("/campaigns/new")}// Updated to match your previous route
+              // FIXED: Matches your AppRoutes path "/campaigns/new"
+              onClick={() => navigate("/campaigns/new")}
               className="px-8 py-4 rounded-full bg-white text-black font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)]"
             >
               + Launch New
@@ -189,7 +197,13 @@ const Home = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
             {campaigns.map((c) => (
-              <CampaignCard key={c.id} campaign={c} onDelete={handleDelete} />
+              <CampaignCard 
+                key={c.id} 
+                campaign={c} 
+                // FIXED: Matches your AppRoutes path "/campaigns/:id"
+                onClick={(id) => navigate(`/campaigns/${id}`)}
+                onDelete={handleDelete} 
+              />
             ))}
             
             {campaigns.length === 0 && (
@@ -198,7 +212,8 @@ const Home = () => {
                   No active campaigns found
                 </p>
                 <button 
-                    onClick={() => navigate("/create")}
+                    // FIXED: This was previously "/create", now matches "/campaigns/new"
+                    onClick={() => navigate("/campaigns/new")}
                     className="text-white border-b border-white pb-0.5 text-sm font-bold hover:text-blue-400 hover:border-blue-400 transition-all"
                 >
                     Create your first campaign
