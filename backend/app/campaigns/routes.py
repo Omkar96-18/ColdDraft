@@ -1,0 +1,57 @@
+from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.orm import Session
+from typing import List, Union
+
+from app.core.database import get_db
+from app.users.routes import get_current_user
+from . import crud, schemas
+
+router = APIRouter()
+
+@router.post("/", response_model=schemas.CampaignAllResponse)
+def create_campaign(
+    payload: Union[schemas.SalesCampaignCreate, schemas.HiringCampaignCreate, schemas.NetworkingCampaignCreate], 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    return crud.create_campaign(db=db, campaign=payload, user_id=current_user.id)
+
+@router.get("/", response_model=List[schemas.CampaignAllResponse])
+def read_campaigns(
+    db: Session = Depends(get_db), 
+    current_user = Depends(get_current_user)
+):
+    return crud.get_campaigns_by_user(db, user_id=current_user.id)
+
+@router.delete("/{campaign_id}")
+def delete_campaign(
+    campaign_id: int, 
+    db: Session = Depends(get_db), 
+    current_user = Depends(get_current_user)
+):
+    deleted = crud.delete_campaign(db, campaign_id=campaign_id, user_id=current_user.id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Campaign not found or access denied")
+    return {"message": "Campaign deleted"}
+
+# ... existing imports ...
+
+# ADD THIS NEW ENDPOINT
+@router.get("/{campaign_id}", response_model=schemas.CampaignAllResponse)
+def read_one_campaign(
+    campaign_id: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    # We use a direct DB query here or a crud function if you have one
+    # Assuming you need to verify the campaign belongs to the user
+    campaign = crud.get_campaign_by_id(db, campaign_id=campaign_id) # You might need to add this to your CRUD file
+    
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+        
+    # Optional: Security check to ensure user owns this campaign
+    if campaign.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    return campaign

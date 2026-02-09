@@ -1,8 +1,68 @@
-
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import api from "../../api"; // Adjusted path to api.js
 
 const Login = () => {
-  const handleNoOp = (e) => e.preventDefault();
+  const navigate = useNavigate();
+
+  // State for form data
+  const [formData, setFormData] = useState({
+    username: "",
+    password: ""
+  });
+
+  // State for UI feedback
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  // Handle Input Change
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  // Handle Form Submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+
+    try {
+      console.log("Attempting login for:", formData.username);
+
+      // Call the Login Endpoint
+      // Full URL: http://127.0.0.1:8000/api/users/login
+      const response = await api.post("/api/users/login", {
+        username: formData.username,
+        password: formData.password
+      });
+
+      console.log("Login Successful:", response.data);
+
+      // 1. Store the Token
+      localStorage.setItem("access_token", response.data.access_token);
+
+      // 2. Redirect to Dashboard
+      navigate("/home");
+
+    } catch (err) {
+      console.error("Login Error:", err);
+      
+      if (err.response) {
+        if (err.response.status === 401) {
+          setError("Invalid username or password.");
+        } else {
+          setError(err.response.data.detail || "Login failed. Please try again.");
+        }
+      } else {
+        setError("Network Error. Is the backend running?");
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-black flex items-center justify-center overflow-hidden font-sans selection:bg-purple-500/30">
@@ -41,8 +101,15 @@ const Login = () => {
               </p>
             </div>
 
+            {/* Error Message Display */}
+            {error && (
+              <div className="mb-6 p-3 rounded-lg bg-red-500/10 border border-red-500/20 text-red-200 text-sm text-center">
+                {error}
+              </div>
+            )}
+
             {/* Login Form */}
-            <form onSubmit={handleNoOp} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
               
               <div className="space-y-1">
                 <label className="text-[11px] uppercase tracking-widest text-gray-500 font-bold ml-1">
@@ -50,7 +117,11 @@ const Login = () => {
                 </label>
                 <input
                   type="text"
+                  name="username"
+                  value={formData.username}
+                  onChange={handleChange}
                   placeholder="Enter username"
+                  required
                   className="
                     w-full rounded-xl px-4 py-3
                     bg-white/[0.03] text-white
@@ -68,7 +139,11 @@ const Login = () => {
                 </label>
                 <input
                   type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="••••••••"
+                  required
                   className="
                     w-full rounded-xl px-4 py-3
                     bg-white/[0.03] text-white
@@ -80,10 +155,11 @@ const Login = () => {
                 />
               </div>
 
-              {/* UPDATED: GLASS SIGN IN BUTTON */}
+              {/* GLASS SIGN IN BUTTON */}
               <button
                 type="submit"
-                className="
+                disabled={loading}
+                className={`
                   w-full mt-2 py-3.5 rounded-xl
                   bg-white/10 backdrop-blur-md
                   border border-white/20
@@ -92,9 +168,10 @@ const Login = () => {
                   active:scale-[0.98]
                   transition-all duration-200
                   shadow-[0_0_30px_rgba(255,255,255,0.05)]
-                "
+                  ${loading ? 'opacity-50 cursor-not-allowed' : ''}
+                `}
               >
-                Sign In
+                {loading ? 'Signing In...' : 'Sign In'}
               </button>
             </form>
 
@@ -130,12 +207,10 @@ const Login = () => {
             {/* Orbiting Shape 3: Top Left (Yellow Triangle-ish) */}
             <div className="absolute top-[30%] left-[20%] w-16 h-16 bg-yellow-600/40 rotate-45 blur-md" />
 
-            {/* THE CENTRAL GLASS SPHERE (CD Text Removed) */}
+            {/* THE CENTRAL GLASS SPHERE */}
             <div className="relative z-10 w-64 h-64 rounded-full bg-gradient-to-b from-white/10 to-transparent backdrop-blur-2xl border border-white/10 shadow-[0_0_60px_rgba(0,0,0,0.5)] flex items-center justify-center overflow-hidden">
-              
               {/* Inner Gloss */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent pointer-events-none" />
-              
             </div>
             
             {/* Floating faint elements behind */}
@@ -150,8 +225,6 @@ const Login = () => {
               ColdDraft is the most powerful way to remember who you've met and what matters to them.
             </p>
           </div>
-
-          {/* Pagination Dots REMOVED here */}
 
         </div>
 
