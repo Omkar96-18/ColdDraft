@@ -1,3 +1,4 @@
+<<<<<<< HEAD:frontend/src/Pages/Register.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -9,6 +10,10 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
+=======
+
+import { Link } from "react-router-dom";
+>>>>>>> origin/main:frontend/src/pages/registration/Register.jsx
 
 const Register = () => {
   const navigate = useNavigate();

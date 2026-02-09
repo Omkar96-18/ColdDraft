@@ -1,6 +1,11 @@
+<<<<<<< HEAD:frontend/src/Pages/Login.jsx
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import api from "../api"; // Ensure this path points to your api.js file
+=======
+
+import { Link } from "react-router-dom";
+>>>>>>> origin/main:frontend/src/pages/registration/Login.jsx
 
 const Login = () => {
   const navigate = useNavigate();

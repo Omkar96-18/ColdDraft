@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import Login from "../Pages/Login";
@@ -7,14 +8,26 @@ import ProtectedRoute from "./ProtectedRoute";
 import CreateCampaign from "../Pages/CreateCampaign";
 import CampaignDetail from "../Pages/CampaignDetail";
 import ProspectDetail from "../Pages/ProspectDetail"; // Ensure this import is correct
+=======
+>>>>>>> origin/main
 
-const AppRoutes = () => {
+import { Routes, Route, Navigate } from "react-router-dom";
+import Login from "../pages/registration/Login";
+import Register from "../pages/registration/Register";
+import Home from "../pages/main/Home";
+
+function AppRoutes ()  {
   return (
     <Routes>
+<<<<<<< HEAD
       {/* Public Routes */}
+=======
+ 
+>>>>>>> origin/main
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+<<<<<<< HEAD
       {/* Protected Routes */}
       <Route
         path="/home"
@@ -54,6 +67,8 @@ const AppRoutes = () => {
       />
 
       {/* Default Redirect */}
+=======
+>>>>>>> origin/main
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );
