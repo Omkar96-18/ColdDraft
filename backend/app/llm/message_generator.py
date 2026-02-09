@@ -1,8 +1,7 @@
-
 import os
 import json
 from langchain_core.prompts import PromptTemplate
-from langchain_community.llms import Ollama
+from langchain_ollama import OllamaLLM
 
 def generate_messages(prospect_name):
     # Path to the prospect's JSON file
@@ -31,20 +30,18 @@ def generate_messages(prospect_name):
     why_approaching = campaign_context["why_approaching"]
 
     # Initialize the LLM
-    llm = Ollama(model="qwen:4b")
+    llm = OllamaLLM(model="qwen:4b", temperature=0.7)
 
-    # Create the prompt template
-    prompt = PromptTemplate(
-        input_variables=[
-            "name", "ethnicity", "profession", "age", "gender", "location",
-            "interests", "socials", "context_from_post", "campaign_name",
-            "campaign_type", "description", "why_approaching"
-        ],
-        template="""
-        As a world-class communication expert, your task is to craft hyper-personalized messages to a prospect named {name}.
-        The messages should be tailored to the prospect's background, interests, and the context of the campaign.
-        
-        Here is the prospect's information:
+    # Define input variables for all prompts
+    common_input_variables = {
+        "name": name, "ethnicity": ethnicity, "profession": profession, "age": age,
+        "gender": gender, "location": location, "interests": interests, "socials": socials,
+        "context_from_post": context_from_post, "campaign_name": campaign_name,
+        "campaign_type": campaign_type, "description": description, "why_approaching": why_approaching
+    }
+
+    base_template = """
+        Prospect Information:
         - Name: {name}
         - Ethnicity: {ethnicity}
         - Profession: {profession}
@@ -53,33 +50,64 @@ def generate_messages(prospect_name):
         - Location: {location}
         - Interests: {interests}
         - Socials: {socials}
-        - Context from post: {context_from_post}
+        - Context from a recent post (if available): {context_from_post}
 
-        Here is the campaign context:
+        Campaign Context:
         - Campaign Name: {campaign_name}
         - Type: {campaign_type}
         - Description: {description}
-        - Why we are approaching them: {why_approaching}
+        - Reason for approaching the prospect: {why_approaching}
 
-        Now, generate the following messages:
-        1. A hyper-personalized email.
-        2. A concise and engaging SMS message.
-        3. A friendly and professional WhatsApp message.
-        
-        The tone should be professional yet approachable.
+        When generating, dynamically replace placeholders (e.g., {{Name}}, {{Product/Service}}, {{Campaign Name}}) with the actual provided prospect and campaign information. Do NOT use generic placeholders like [Prospect's Name] in the final output.
+    """
+
+    # Email Prompt
+    email_prompt = PromptTemplate(
+        input_variables=list(common_input_variables.keys()),
+        template=f"""
+        {base_template}
+        Generate a hyper-personalized email message for {name}.
+        Include a relevant subject line. The tone should be professional yet approachable.
+        --- EMAIL ---
+        Subject:
+        Body:
         """
     )
 
-    # Generate the messages
-    messages = llm.invoke(prompt.format(
-        name=name, ethnicity=ethnicity, profession=profession, age=age,
-        gender=gender, location=location, interests=interests, socials=socials,
-        context_from_post=context_from_post, campaign_name=campaign_name,
-        campaign_type=campaign_type, description=description, why_approaching=why_approaching
-    ))
+    # SMS Prompt
+    sms_prompt = PromptTemplate(
+        input_variables=list(common_input_variables.keys()),
+        template=f"""
+        {base_template}
+        Generate a concise and engaging SMS message for {name}.
+        The message should be no more than 160 characters.
+        --- SMS ---
+        """
+    )
 
-    # Print the messages
-    print(messages)
+    # WhatsApp Prompt
+    whatsapp_prompt = PromptTemplate(
+        input_variables=list(common_input_variables.keys()),
+        template=f"""
+        {base_template}
+        Generate a friendly and professional WhatsApp message for {name}.
+        The message should be suitable for a casual but respectful tone and no more than 500 characters.
+        --- WHATSAPP ---
+        """
+    )
+
+    # Generate and print messages
+    print("--- EMAIL ---")
+    email_message = llm.invoke(email_prompt.format(**common_input_variables))
+    print(email_message.strip())
+
+    print("\n--- SMS ---")
+    sms_message = llm.invoke(sms_prompt.format(**common_input_variables))
+    print(sms_message.strip())
+
+    print("\n--- WHATSAPP ---")
+    whatsapp_message = llm.invoke(whatsapp_prompt.format(**common_input_variables))
+    print(whatsapp_message.strip())
 
 if __name__ == "__main__":
     # Get all the prospect names from the contacts directory
