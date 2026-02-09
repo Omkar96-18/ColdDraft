@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "Atharva kulkarni",
+        "ethnicity": "indian",
+        "profession": "AI developer",
+        "age": 24,
+        "gender": "Male",
+        "location": "Maharashtra",
+        "interests": "Like Anime, follow Ai news ",
+        "socials": {
+            "linkedin": "abc.com",
+            "instagram": "wkshvcbaoug",
+            "portfolio": "yvhjyhvg@com"
+        },
+        "context_from_post": "I llove pubg, i always pubg alone"
+    },
+    "campaign_context": {
+        "campaign_name": "Q2 boAt Headphones Festive Sale",
+        "type": "sales",
+        "description": "A limited-time festive campaign promoting premium boAt wireless headphones with exclusive discounts, fast delivery, and extended warranty offers across India.",
+        "why_approaching": "Selling product 'boAt Rockerz 450 Wireless Headphones' at 1999.0. Key details: The boAt Rockerz 450 wireless headphones deliver powerful HD sound with deep bass, up to 15 hours of playback time, and a lightweight ergonomic design — perfect for music, gaming, and work calls."
+    }
+}
