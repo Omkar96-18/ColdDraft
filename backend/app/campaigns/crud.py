@@ -49,3 +49,7 @@ def delete_campaign(db: Session, campaign_id: int, user_id: int):
         db.commit()
         return True
     return False
+
+# In crud.py
+def get_campaign_by_id(db: Session, campaign_id: int):
+    return db.query(models.Campaign).filter(models.Campaign.id == campaign_id).first()

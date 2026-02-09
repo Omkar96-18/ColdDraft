@@ -33,3 +33,25 @@ def delete_campaign(
     if not deleted:
         raise HTTPException(status_code=404, detail="Campaign not found or access denied")
     return {"message": "Campaign deleted"}
+
+# ... existing imports ...
+
+# ADD THIS NEW ENDPOINT
+@router.get("/{campaign_id}", response_model=schemas.CampaignAllResponse)
+def read_one_campaign(
+    campaign_id: int, 
+    db: Session = Depends(get_db),
+    current_user = Depends(get_current_user)
+):
+    # We use a direct DB query here or a crud function if you have one
+    # Assuming you need to verify the campaign belongs to the user
+    campaign = crud.get_campaign_by_id(db, campaign_id=campaign_id) # You might need to add this to your CRUD file
+    
+    if not campaign:
+        raise HTTPException(status_code=404, detail="Campaign not found")
+        
+    # Optional: Security check to ensure user owns this campaign
+    if campaign.user_id != current_user.id:
+        raise HTTPException(status_code=403, detail="Not authorized")
+        
+    return campaign
