@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "anuj",
+        "ethnicity": "undefined",
+        "profession": "BEROJGAR",
+        "age": 100,
+        "gender": "other",
+        "location": "Pune, India",
+        "interests": "nalla berojgar admi hu mai.",
+        "socials": {
+            "linkedin": "berojgarbaba",
+            "instagram": "berojgarkijay",
+            "portfolio": "kajbdc.com"
+        },
+        "context_from_post": "chal nikal"
+    },
+    "campaign_context": {
+        "campaign_name": "IISER Pune Research Partnership",
+        "type": "networking",
+        "description": "Outreach to academic leads met during the Pune conference. Aiming to bridge our internal AI models with their biological datasets.",
+        "why_approaching": "Goal is Secure as Technical Advisor / Joint Publication. Initial context: Met at IISER Pune Symposium; discussed protein folding algorithms over tea. Target Industry: Computational Biology / Academia"
+    }
+}
