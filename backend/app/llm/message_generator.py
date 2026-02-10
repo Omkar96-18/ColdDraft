@@ -29,49 +29,93 @@ def generate_messages(prospect_name):
     description = campaign_context["description"]
     why_approaching = campaign_context["why_approaching"]
 
-    # Initialize the LLM
-    llm = OllamaLLM(model="qwen:4b", temperature=0.7)
+    # Initialize the LLM with the user-requested temperature
+    llm = OllamaLLM(model="llama3:8b-instruct-q4_K_M", temperature=0.8)
 
-    # Define input variables for all prompts
-    common_input_variables = {
-        "name": name, "ethnicity": ethnicity, "profession": profession, "age": age,
-        "gender": gender, "location": location, "interests": interests, "socials": socials,
-        "context_from_post": context_from_post, "campaign_name": campaign_name,
-        "campaign_type": campaign_type, "description": description, "why_approaching": why_approaching
+    # --- SENDER INFORMATION ---
+    # This is dummy data representing the sender of the messages.
+    sender_info = {
+        "name": "Alex Doe",
+        "institution": "Innovate Inc.",
+        "title": "Talent Acquisition Lead",
+        "message_aim": "We are looking to hire a senior software engineer and your profile on LinkedIn looks like a great fit for our team."
     }
 
+    # Define input variables for all prompts.
+    # Note: The new prompt strategy focuses on a few key data points for the email.
+    common_input_variables = {
+        "name": name,
+        "profession": profession,
+        "location": location,
+        "interests": interests,
+        "context_from_post": context_from_post,
+        "campaign_name": campaign_name,
+        "why_approaching": why_approaching,
+        "sender_name": sender_info["name"],
+        "sender_institution": sender_info["institution"],
+        "sender_title": sender_info["title"],
+        "message_aim": sender_info["message_aim"]
+    }
+
+    # This base_template is now only used for SMS and WhatsApp as a fallback.
+    # The email prompt uses a new, more effective strategy.
     base_template = """
-        Prospect Information:
+        **PROSPECT DATA:**
         - Name: {name}
-        - Ethnicity: {ethnicity}
         - Profession: {profession}
-        - Age: {age}
-        - Gender: {gender}
-        - Location: {location}
-        - Interests: {interests}
-        - Socials: {socials}
-        - Context from a recent post (if available): {context_from_post}
+        - Key Interests: {interests}
+        - Recent Activity/Post Context: {context_from_post}
 
-        Campaign Context:
-        - Campaign Name: {campaign_name}
-        - Type: {campaign_type}
-        - Description: {description}
-        - Reason for approaching the prospect: {why_approaching}
+        **SENDER & GOAL:**
+        - From: {sender_name}, {sender_title} at {sender_institution}
+        - Our Goal: {message_aim}
+        - Why You Specifically: {why_approaching}
 
-        When generating, dynamically replace placeholders (e.g., {{Name}}, {{Product/Service}}, {{Campaign Name}}) with the actual provided prospect and campaign information. Do NOT use generic placeholders like [Prospect's Name] in the final output.
+        Generate a short, friendly message based on the data above.
     """
 
-    # Email Prompt
+    # Email Prompt - NEW STRATEGY
+    # This prompt uses a "few-shot" example to guide the model. This is often more
+    # effective for smaller models than abstract instructions.
+    email_template_string = """
+        **Task:** Write a personalized cold email from {sender_name} to {name}.
+
+        **Key Information to Use:**
+        *   Prospect's Name: {name}
+        *   Prospect's Profession: {profession}
+        *   Prospect's Main Interest: {interests}
+        *   Something Specific They Did/Posted: "{context_from_post}"
+        *   Your Goal: {message_aim}
+
+        **Instructions:**
+        1.  Start the email by mentioning their specific activity or post. This is your opening hook.
+        2.  Connect that activity to their profession or main interest.
+        3.  Smoothly transition to your goal, explaining why their background is a perfect fit.
+        4.  Keep it short, personal, and end with a simple, low-friction question.
+        5.  The email should be from {sender_name} of {sender_institution}.
+
+        **Here is an example of a perfect email to follow:**
+        "Subject: Your recent post on vector databases
+
+        Hi {name},
+
+        I saw your recent post about exploring vector databases for RAG applications. As someone also deep in the AI/ML space, I found your insights really sharp.
+
+        Given your work in {profession}, I thought you might be interested to know that we at {sender_institution} are looking for a senior software engineer to help build out our next-gen search infrastructure. Your hands-on experience seems like a perfect match for what we're doing.
+
+        Would you be open to a brief chat next week to discuss it?
+
+        Best,
+        {sender_name}"
+
+        ---
+        Now, using the **Key Information to Use**, write ONLY the new, unique, and hyper-personalized email for {name} that follows the style and structure of the example. DO NOT include any introductory or concluding remarks from yourself, just the email content. Do not copy the example, use the provided data.
+
+        --- EMAIL ---
+        """
     email_prompt = PromptTemplate(
         input_variables=list(common_input_variables.keys()),
-        template=f"""
-        {base_template}
-        Generate a hyper-personalized email message for {name}.
-        Include a relevant subject line. The tone should be professional yet approachable.
-        --- EMAIL ---
-        Subject:
-        Body:
-        """
+        template=email_template_string
     )
 
     # SMS Prompt
@@ -79,8 +123,10 @@ def generate_messages(prospect_name):
         input_variables=list(common_input_variables.keys()),
         template=f"""
         {base_template}
-        Generate a concise and engaging SMS message for {name}.
-        The message should be no more than 160 characters.
+        ---
+        Now, apply the methodology to write ONLY a concise and impactful SMS to {name}.
+        The message MUST be under 160 characters. It needs a strong, personal hook to work in such a small space. DO NOT include any introductory or concluding remarks from yourself, just the SMS content.
+
         --- SMS ---
         """
     )
@@ -90,8 +136,10 @@ def generate_messages(prospect_name):
         input_variables=list(common_input_variables.keys()),
         template=f"""
         {base_template}
-        Generate a friendly and professional WhatsApp message for {name}.
-        The message should be suitable for a casual but respectful tone and no more than 500 characters.
+        ---
+        Now, apply the methodology to write ONLY a friendly, conversational WhatsApp message to {name}.
+        The tone should be casual but professional. Reference their background to make it feel warm. DO NOT include any introductory or concluding remarks from yourself, just the WhatsApp content.
+
         --- WHATSAPP ---
         """
     )
