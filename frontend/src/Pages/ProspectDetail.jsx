@@ -64,17 +64,17 @@ const ProspectDetail = () => {
         </header>
 
         {/* --- HERO SECTION --- */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12 items-center">
             
-            {/* Avatar / Initials */}
+            {/* 1. Avatar / Initials */}
             <div className="md:col-span-2">
                 <div className={`aspect-square rounded-3xl bg-gradient-to-br from-white/10 to-transparent border border-white/10 flex items-center justify-center text-6xl font-black text-white ${theme.glow}`}>
-                    {prospect.full_name.charAt(0)}
+                    {prospect.full_name?.charAt(0) || "?"}
                 </div>
             </div>
 
-            {/* Name & Quick Stats */}
-            <div className="md:col-span-10 flex flex-col justify-center">
+            {/* 2. Name & Quick Stats */}
+            <div className="md:col-span-8 flex flex-col justify-center">
                 <h1 className="text-5xl md:text-6xl font-black text-white tracking-tighter mb-2">
                     {prospect.full_name}
                 </h1>
@@ -86,6 +86,29 @@ const ProspectDetail = () => {
                     {prospect.age && <span>🎂 {prospect.age} Years Old</span>}
                     {prospect.gender && <span>👤 {prospect.gender}</span>}
                 </div>
+            </div>
+
+            {/* 3. THE MAGIC CUBE (Action Button) */}
+            <div className="md:col-span-2 flex justify-end">
+                <button
+                    onClick={() => navigate(`/prospects/${id}/write`)}
+                    className="group relative w-20 h-20 bg-[#0F0F0F] rounded-2xl border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-105 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] overflow-hidden"
+                    title="Initialize AI Outreach"
+                >
+                    {/* The Cube Icon */}
+                    <svg 
+                        className="w-8 h-8 text-zinc-600 group-hover:text-blue-400 transition-colors duration-300 group-hover:rotate-12" 
+                        viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"
+                    >
+                        <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                        <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                    </svg>
+
+                    {/* Corner accents */}
+                    <div className="absolute top-0 right-0 w-2 h-2 border-t border-r border-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    <div className="absolute bottom-0 left-0 w-2 h-2 border-b border-l border-blue-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                </button>
             </div>
         </div>
 

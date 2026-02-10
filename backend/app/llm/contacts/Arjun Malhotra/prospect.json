@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "Arjun Malhotra",
+        "ethnicity": "South Asian",
+        "profession": "Senior Product Designer",
+        "age": 32,
+        "gender": "Male",
+        "location": "Bengaluru, Karnataka, India",
+        "interests": "\"Generative AI Art\",\n      \"Urban Sketching\",\n      \"Mechanical Keyboards\",\n      \"Sustainable Architecture\"",
+        "socials": {
+            "linkedin": "https://www.linkedin.com/in/arjun-malhotra-design",
+            "instagram": "https://www.instagram.com/arjun_creates",
+            "portfolio": "https://arjunmalhotra.design"
+        },
+        "context_from_post": "One lesson I didn’t expect to learn this week:\n\nStarting strong matters less than recovering well.\n\nMy pitch didn’t begin perfectly.\nI was nervous.\nThe first few seconds were slow.\n\nThen I stopped performing\nand started explaining.\n\nI missed the sequence,\nbut I didn’t miss the truth.\n\nThat taught me something bigger than pitching:\n\nStartups won’t start perfectly.\nWhat matters is how quickly you regain clarity.\n\nNot panic.\nNot ego.\nJust adjustment.\n\nIf you’re a student founder —\ndon’t wait to feel confident.\nLearn to recover."
+    },
+    "campaign_context": {
+        "campaign_name": "Hiring frontend lead for fintech platform",
+        "type": "hiring",
+        "description": "A strategic outreach campaign targeting Senior Full Stack Developers to scale our core platform team.",
+        "why_approaching": "Hiring for 'Senior Full Stack Engineer (Node.js & React)' role requiring 5 years exp. Location: Pune, Maharashtra (Hybrid). Skills: \"JavaScript/TypeScript\",       \"React.js\",       \"Node.js\",       \"PostgreSQL\",       \"AWS Services\""
+    }
+}
