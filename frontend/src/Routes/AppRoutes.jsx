@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import CreateCampaign from "../pages/campaigns/CreateCampaign";
 import CampaignDetail from "../pages/campaigns/CampaignDetail";
 import ProspectDetail from "../pages/prospects/ProspectDetail";
+import MessageGenerator from "../pages/message_generator/MessageGenerator";
 
 function AppRoutes ()  {
   return (
@@ -48,6 +49,15 @@ function AppRoutes ()  {
         element={
           <ProtectedRoute>
             <ProspectDetail />
+          </ProtectedRoute>
+        }
+      />
+
+      <Route
+        path="/messages/generate"
+        element={
+          <ProtectedRoute>
+            <MessageGenerator />
           </ProtectedRoute>
         }
       />

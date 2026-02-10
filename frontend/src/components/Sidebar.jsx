@@ -1,49 +1,52 @@
-import React from "react";
+import React from 'react';
+import { NavLink } from 'react-router-dom';
 
-const Sidebar = ({ user }) => {
-  const menuItems = ['Campaigns', 'Analytics', 'Contacts', 'Settings'];
-  
-  // Get first letter for the avatar, fallback to '?'
-  const userInitial = user?.username?.charAt(0).toUpperCase() || "U";
-
-  return (
-    <aside className="w-64 border-r border-white/[0.06] bg-white/[0.01] backdrop-blur-3xl z-20 flex flex-col shadow-[20px_0_50px_rgba(0,0,0,0.5)]">
-      <div className="p-8">
-        <div className="flex items-center gap-3">
-          <div className="h-9 w-9 rounded-xl bg-gradient-to-br from-white to-zinc-500 shadow-[0_0_15px_rgba(255,255,255,0.2)] flex items-center justify-center text-black font-black text-lg">
-            {userInitial}
-          </div>
-          <span className="text-white font-bold tracking-tight text-lg truncate">
-            {user?.username || "Guest User"}
-          </span>
-        </div>
+const Sidebar = ({ user, onLogout }) => (
+  <aside className="w-20 lg:w-64 border-r border-white/5 bg-black/20 backdrop-blur-3xl h-screen flex flex-col items-center lg:items-start p-6 z-20 fixed left-0 top-0">
+    <div className="flex items-center gap-3 mb-12">
+      <div className="h-10 w-10 rounded-xl bg-white text-black flex items-center justify-center font-black text-xl shadow-lg shadow-white/10">
+        {user?.username?.charAt(0).toUpperCase()}
       </div>
-      
-      <nav className="flex-1 px-4 mt-4 space-y-1.5">
-        {menuItems.map(item => (
-          <div 
-            key={item} 
-            className={`group cursor-pointer px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-300 ${
-              item === 'Campaigns' 
-                ? 'bg-white/10 text-white shadow-[inset_0_1px_1px_rgba(255,255,255,0.1)]' 
-                : 'text-zinc-500 hover:text-zinc-200 hover:bg-white/5'
-            }`}
-          >
-            {item}
-          </div>
-        ))}
-      </nav>
-
-      <div className="p-6">
-        <div className="p-4 rounded-3xl bg-white/[0.03] border border-white/5">
-          <p className="text-[10px] font-black uppercase text-zinc-500 mb-2 tracking-widest">Storage</p>
-          <div className="h-1 w-full bg-zinc-800 rounded-full overflow-hidden">
-            <div className="h-full w-2/3 bg-white rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" />
-          </div>
-        </div>
+      <div className="hidden lg:flex flex-col">
+        <span className="text-white font-bold truncate w-32">{user?.username}</span>
+        <span className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest">
+          Active User
+        </span>
       </div>
-    </aside>
-  );
-};
+    </div>
+    
+    <nav className="flex-1 space-y-2 w-full">
+      <NavLink
+        to="/home"
+        className={({ isActive }) =>
+          `p-4 rounded-2xl cursor-pointer font-bold text-sm text-center lg:text-left transition-all w-full
+          ${isActive ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white'}`
+        }
+      >
+        Campaigns
+      </NavLink>
+      <NavLink
+        to="/messages/generate" // New link for AI Message Generator
+        className={({ isActive }) =>
+          `p-4 rounded-2xl cursor-pointer font-bold text-sm text-center lg:text-left transition-all w-full
+          ${isActive ? 'bg-white/10 text-white' : 'text-zinc-500 hover:text-white'}`
+        }
+      >
+        AI Gen
+      </NavLink>
+      <div className="text-zinc-500 p-4 hover:text-white cursor-pointer transition-all text-sm font-bold text-center lg:text-left">
+        Analytics
+      </div>
+    </nav>
+    
+    <button
+      onClick={onLogout}
+      className="w-full p-4 rounded-2xl border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] hover:bg-red-500/10 transition-all"
+    >
+      <span className="hidden lg:inline">Logout</span>
+      <span className="lg:hidden">X</span>
+    </button>
+  </aside>
+);
 
 export default Sidebar;
