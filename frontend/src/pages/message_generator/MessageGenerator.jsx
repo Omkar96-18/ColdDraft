@@ -1,6 +1,65 @@
-import React from 'react';
+import React, { useState } from 'react';
+import api from '../../api'; // Assuming api.js is in frontend/src/api.js
 
 const MessageGenerator = () => {
+  const [prospectName, setProspectName] = useState('');
+  const [generatedMessages, setGeneratedMessages] = useState({
+    email: '',
+    sms: '',
+    whatsapp: '',
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const handleGenerateMessages = async () => {
+    setError('');
+    setLoading(true);
+    setGeneratedMessages({ email: '', sms: '', whatsapp: '' }); // Clear previous messages
+
+    try {
+      // Get token from local storage
+      const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+      if (!token) {
+        setError("Authentication token not found. Please log in.");
+        setLoading(false);
+        return;
+      }
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const response = await api.post(
+        '/api/llm/generate',
+        { prospect_name: prospectName },
+        config
+      );
+      setGeneratedMessages(response.data);
+    } catch (err) {
+      console.error('Message generation failed:', err);
+      if (err.response) {
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        if (err.response.status === 404) {
+          setError(`Prospect '${prospectName}' not found. Please check the name.`);
+        } else {
+          setError(`Error: ${err.response.data.detail || err.message}`);
+        }
+      } else if (err.request) {
+        // The request was made but no response was received
+        setError('No response from server. Please ensure the backend is running.');
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setError(`Error: ${err.message}`);
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="flex-1 p-8 lg:p-12">
       <h1 className="text-5xl font-black tracking-tighter text-white mb-2">
@@ -21,13 +80,24 @@ const MessageGenerator = () => {
               id="prospectName"
               className="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
               placeholder="Enter prospect name"
+              value={prospectName}
+              onChange={(e) => setProspectName(e.target.value)}
+              disabled={loading}
             />
           </div>
 
+          {error && (
+            <div className="mb-4 p-4 rounded-xl bg-red-500/20 text-red-400 text-sm font-bold">
+              {error}
+            </div>
+          )}
+
           <button
+            onClick={handleGenerateMessages}
             className="px-8 py-4 rounded-full bg-blue-600 text-white font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+            disabled={loading || !prospectName.trim()}
           >
-            Generate Messages
+            {loading ? 'Generating...' : 'Generate Messages'}
           </button>
         </div>
 
@@ -40,6 +110,7 @@ const MessageGenerator = () => {
               rows="10"
               className="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-zinc-200 resize-none focus:outline-none"
               placeholder="Generated email will appear here..."
+              value={generatedMessages.email}
             ></textarea>
           </div>
 
@@ -51,6 +122,7 @@ const MessageGenerator = () => {
               rows="10"
               className="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-zinc-200 resize-none focus:outline-none"
               placeholder="Generated SMS will appear here..."
+              value={generatedMessages.sms}
             ></textarea>
           </div>
 
@@ -62,6 +134,7 @@ const MessageGenerator = () => {
               rows="10"
               className="w-full p-4 rounded-xl bg-white/5 border border-white/10 text-zinc-200 resize-none focus:outline-none"
               placeholder="Generated WhatsApp message will appear here..."
+              value={generatedMessages.whatsapp}
             ></textarea>
           </div>
         </div>

@@ -144,24 +144,13 @@ def generate_messages(prospect_name):
         """
     )
 
-    # Generate and print messages
-    print("--- EMAIL ---")
-    email_message = llm.invoke(email_prompt.format(**common_input_variables))
-    print(email_message.strip())
+    # Generate messages
+    email_message = llm.invoke(email_prompt.format(**common_input_variables)).strip()
+    sms_message = llm.invoke(sms_prompt.format(**common_input_variables)).strip()
+    whatsapp_message = llm.invoke(whatsapp_prompt.format(**common_input_variables)).strip()
 
-    print("\n--- SMS ---")
-    sms_message = llm.invoke(sms_prompt.format(**common_input_variables))
-    print(sms_message.strip())
-
-    print("\n--- WHATSAPP ---")
-    whatsapp_message = llm.invoke(whatsapp_prompt.format(**common_input_variables))
-    print(whatsapp_message.strip())
-
-if __name__ == "__main__":
-    # Get all the prospect names from the contacts directory
-    prospect_names = os.listdir(os.path.join("app", "llm", "contacts"))
-    
-    for prospect_name in prospect_names:
-        print(f"Generating messages for {prospect_name}...")
-        generate_messages(prospect_name)
-        print("-" * 20)
+    return {
+        "email": email_message,
+        "sms": sms_message,
+        "whatsapp": whatsapp_message
+    }
