@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "Alex Chen",
+        "ethnicity": "Asian-American",
+        "profession": "Senior Backend Engineer",
+        "age": 32,
+        "gender": "Male",
+        "location": "Seattle, WA (Open to Remote)",
+        "interests": "Open-source contribution, trail running, brewing specialty coffee, system design architecture.",
+        "socials": {
+            "linkedin": "linkedin.com/in/alexchen-backend",
+            "instagram": "instagram.com/alexcodes_",
+            "portfolio": "github.com/alexchen-dev"
+        },
+        "recent_post_analysis": "Just wrapped up a massive migration from a legacy monolith to microservices using FastAPI and Kubernetes. The performance gains are unreal—latency dropped by 40% across the board. It was a headache at times, but seeing the new metrics makes it all worth it. Huge shoutout to the infra team for the support! #Engineering #Scalability #Python #Backend"
+    },
+    "campaign_context": {
+        "campaign_name": "Senior Backend Expansion",
+        "type": "hiring",
+        "description": "Aggressive hiring push for our core platform team focusing on scalability and performance optimization.",
+        "why_approaching": "Hiring for 'Senior Python Engineer' role requiring 5 years exp. Location: Remote (US/EU Timezones). Skills: Python, FastAPI, PostgreSQL, Docker, AWS, System Design"
+    }
+}

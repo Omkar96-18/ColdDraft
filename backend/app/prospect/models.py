@@ -3,19 +3,44 @@ from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.core.database import Base
 
-# --- Existing Prospect Model (Updated) ---
+# =======================
+# 1. PROSPECT MODEL
+# =======================
 class Prospect(Base):
     __tablename__ = "prospects"
 
     id = Column(Integer, primary_key=True, index=True)
-    campaign_id = Column(Integer, ForeignKey("campaigns.id", ondelete="CASCADE"), nullable=False)
     
-    # ... (Your existing columns: full_name, etc.) ...
-    full_name = Column(String, nullable=False)
-    # ... other columns ...
+    # Foreign Key to Campaign
+    campaign_id = Column(
+        Integer, 
+        ForeignKey("campaigns.id", ondelete="CASCADE"), 
+        nullable=False
+    )
 
-    # Relationship to Responses
-    # uselist=False ensures 1-to-1 relationship (One prospect gets ONE response object)
+    # Prospect Details
+    full_name = Column(String, nullable=False)
+    ethnicity = Column(String, nullable=True)
+    profession = Column(String, nullable=True)
+    age = Column(Integer, nullable=True)
+    gender = Column(String, nullable=True)
+    interests_hobbies = Column(Text, nullable=True)
+    phone = Column(String, nullable=True)
+    email = Column(String, nullable=True)
+    region = Column(String, nullable=True)
+    linkedin_url = Column(String, nullable=True)
+    instagram_url = Column(String, nullable=True)
+    portfolio_url = Column(String, nullable=True)
+    previous_post_text = Column(Text, nullable=True)
+    
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+    # --- RELATIONSHIPS ---
+    
+    # 1. Link back to Campaign (THIS WAS MISSING)
+    campaign = relationship("Campaign", back_populates="prospects")
+
+    # 2. Link to Interaction Log (Response)
     interaction_log = relationship(
         "Response", 
         back_populates="prospect", 
@@ -23,20 +48,22 @@ class Prospect(Base):
         cascade="all, delete-orphan"
     )
 
-# --- NEW Response Model ---
+
+# =======================
+# 2. RESPONSE MODEL
+# =======================
 class Response(Base):
     __tablename__ = "responses"
 
     id = Column(Integer, primary_key=True, index=True)
     
     # Foreign Key to Prospect
-    # unique=True enforces that one prospect can only have ONE row in this table
     prospect_id = Column(Integer, ForeignKey("prospects.id", ondelete="CASCADE"), unique=True, nullable=False)
 
-    # Response Content Channels
-    email_text = Column(Text, nullable=True)     # Stores the email reply content
-    whatsapp_text = Column(Text, nullable=True)  # Stores the WhatsApp reply content
-    sms_text = Column(Text, nullable=True)       # Stores the SMS reply content
+    # Content Channels
+    email_text = Column(Text, nullable=True)
+    whatsapp_text = Column(Text, nullable=True)
+    sms_text = Column(Text, nullable=True)
 
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
