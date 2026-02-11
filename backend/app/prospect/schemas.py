@@ -1,31 +1,21 @@
-from pydantic import BaseModel, EmailStr, ConfigDict  # <--- 1. Import ConfigDict
+from pydantic import BaseModel, ConfigDict
 from typing import Optional
 from datetime import datetime
 
-class ProspectBase(BaseModel):
-    full_name: str
-    ethnicity: Optional[str] = None
-    profession: Optional[str] = None
-    age: Optional[int] = None
-    gender: Optional[str] = None
-    interests_hobbies: Optional[str] = None
-    phone: Optional[str] = None
-    email: Optional[EmailStr] = None
-    region: Optional[str] = None
-    linkedin_url: Optional[str] = None
-    instagram_url: Optional[str] = None
-    portfolio_url: Optional[str] = None
-    previous_post_text: Optional[str] = None
+# --- Base Schema (Shared properties) ---
+class ResponseBase(BaseModel):
+    email_text: Optional[str] = None
+    whatsapp_text: Optional[str] = None
+    sms_text: Optional[str] = None
 
+# --- Create Schema (What frontend sends) ---
+class ResponseCreate(ResponseBase):
+    prospect_id: int
 
-class ProspectCreate(ProspectBase):
-    campaign_id: int
-
-
-class ProspectResponse(ProspectBase):
+# --- Response Schema (What API returns) ---
+class ResponseOut(ResponseBase):
     id: int
-    campaign_id: int
-    created_at: datetime
+    prospect_id: int
+    updated_at: datetime
 
-    # --- 2. THE FIX ---
     model_config = ConfigDict(from_attributes=True)

@@ -74,3 +74,49 @@ def get_prospect_detail(
     if db_prospect is None:
         raise HTTPException(status_code=404, detail="Prospect not found")
     return db_prospect
+
+@router.post("/response/", response_model=schemas.ResponseOut)
+def create_interaction_log(
+    response_data: schemas.ResponseCreate,
+    db: Session = Depends(get_db)
+):
+    """
+    Creates the initial interaction log for a prospect.
+    If one already exists, it returns the existing one.
+    """
+    # Verify prospect exists first
+    prospect = crud.get_prospect(db, response_data.prospect_id)
+    if not prospect:
+        raise HTTPException(status_code=404, detail="Prospect not found")
+
+    return crud.create_response(db, response_data)
+
+
+@router.get("/{prospect_id}/response", response_model=schemas.ResponseOut)
+def get_interaction_log(
+    prospect_id: int,
+    db: Session = Depends(get_db)
+):
+    """
+    Fetches the generated email/SMS/WhatsApp texts for a specific prospect.
+    """
+    db_response = crud.get_response_by_prospect(db, prospect_id)
+    if not db_response:
+        raise HTTPException(status_code=404, detail="No response log found for this prospect")
+    return db_response
+
+
+@router.patch("/{prospect_id}/response", response_model=schemas.ResponseOut)
+def update_interaction_log(
+    prospect_id: int,
+    response_update: schemas.ResponseBase,
+    db: Session = Depends(get_db)
+):
+    """
+    Updates the text content (e.g., if you regenerate the email with AI).
+    Only updates fields you send; leaves others alone.
+    """
+    db_response = crud.update_response_text(db, prospect_id, response_update)
+    if not db_response:
+        raise HTTPException(status_code=404, detail="Response log not found")
+    return db_response
