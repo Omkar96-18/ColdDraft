@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict  # <--- 1. Import ConfigDict
 from typing import Optional
 from datetime import datetime
 
@@ -27,5 +27,5 @@ class ProspectResponse(ProspectBase):
     campaign_id: int
     created_at: datetime
 
-    class Config:
-        orm_mode = True
+    # --- 2. THE FIX ---
+    model_config = ConfigDict(from_attributes=True)

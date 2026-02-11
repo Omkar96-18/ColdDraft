@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "Marcus Chen",
+        "ethnicity": "Asian-American",
+        "profession": "CTO & Co-Founder at PayFlow",
+        "age": 34,
+        "gender": "Male",
+        "location": "San Francisco Bay Area, CA",
+        "interests": "DeFi Architecture, Rust Programming, Rock Climbing, Sci-Fi Novels, Pour-over Coffee.",
+        "socials": {
+            "linkedin": "https://linkedin.com/in/marcus-chen-tech",
+            "instagram": "https://instagram.com/marcus_builds",
+            "portfolio": "https://marcuschen.dev"
+        },
+        "recent_post_analysis": "Just wrapped up our Series A funding round! 🚀 It's been a wild ride optimizing our transaction layer to handle 10k TPS without compromising security. Huge shoutout to the engineering team for pulling all-nighters this month. Now the real work begins: scaling trust in a trustless world. #FinTech #Blockchain #StartupLife #Engineering"
+    },
+    "campaign_context": {
+        "campaign_name": "FinTech_Founders_Circle",
+        "type": "networking",
+        "description": "An outreach initiative to connect with Series-A founders in the FinTech space to discuss decentralized finance trends and explore potential advisory board synergies.",
+        "why_approaching": "Goal is Schedule a 15-minute virtual coffee chat to discuss industry headwinds and potentially invite them to our private founder's slack community.. Initial context: I recently read your whitepaper on cross-border payments and noticed we share several mutual connections in the Ethereum Alliance. Target Industry: Financial Technology (FinTech) / Blockchain"
+    }
+}
