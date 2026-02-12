@@ -108,7 +108,7 @@ Social Links:
 Social Links: 
 * Github: https://github.com/Atharva-kul
 * LinkedIn: https://www.linkedin.com/in/atharva-kulkarni-a1843829b/
-* Email: 
+* Email: atharvakulkarni2112005@gmail.com
 ### Khetaram Suthar
 Social Links: 
 * Github: https://github.com/Ksuthar99
