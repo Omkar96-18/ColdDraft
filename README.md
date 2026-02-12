@@ -97,7 +97,7 @@
 Social Links: 
 * Github: https://github.com/SahilKaturde
 * LinkedIn: https://www.linkedin.com/in/sahil-katurde-b26690345/
-* Email: ahilkaturde1@gmail.com
+* Email: sahilkaturde1@gmail.com
 * Portfolio: https://sahilkaturde.netlify.app/
 
 ### Omkar Amit Pardeshi 
