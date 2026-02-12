@@ -91,7 +91,7 @@ const ProspectDetail = () => {
             {/* 3. THE MAGIC CUBE (Action Button) */}
             <div className="md:col-span-2 flex justify-end">
                 <button
-                    onClick={() => navigate(`/prospects/${id}/write`)}
+                    onClick={() => navigate(`/prospects/${id}/write`, { state: { prospectName: prospect.full_name } })}
                     className="group relative w-20 h-20 bg-[#0F0F0F] rounded-2xl border border-white/10 flex items-center justify-center transition-all duration-300 hover:scale-105 hover:border-blue-500/50 hover:shadow-[0_0_40px_rgba(59,130,246,0.3)] overflow-hidden"
                     title="Initialize AI Outreach"
                 >

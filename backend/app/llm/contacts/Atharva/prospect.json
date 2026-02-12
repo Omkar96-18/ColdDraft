@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "Atharva",
+        "ethnicity": "Indian",
+        "profession": "AI developer",
+        "age": 20,
+        "gender": "Male",
+        "location": "Pune, India",
+        "interests": "coding, AI",
+        "socials": {
+            "linkedin": "abcd.com",
+            "instagram": "abcd",
+            "portfolio": "abcd.com"
+        },
+        "recent_post_analysis": "taking part in hackathon"
+    },
+    "campaign_context": {
+        "campaign_name": "Senior Backend Expansion",
+        "type": "hiring",
+        "description": "Aggressive hiring push for our core platform team focusing on scalability and performance optimization.",
+        "why_approaching": "Hiring for 'Senior Python Engineer' role requiring 5 years exp. Location: Remote (US/EU Timezones). Skills: Python, FastAPI, PostgreSQL, Docker, AWS, System Design"
+    }
+}

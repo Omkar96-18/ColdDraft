@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+.venv/
+venv/
+venv.bak/
+.env
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.bak
+*.swo
+
+# OS generated files
+.DS_Store
+.Trashes
+Thumbs.db
+
+# Logs and other generated files
+*.log
+*.tmp
+*.sqlite3
+main.dbmain.db

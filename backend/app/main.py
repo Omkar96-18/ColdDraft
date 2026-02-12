@@ -5,6 +5,7 @@ from app.core.database import engine, Base
 from app.users.routes import router as user_router
 from app.campaigns.routes import router as campaign_router
 from app.prospect.routes import router as prospect_router
+from app.llm.routes import router as llm_router
 
 app = FastAPI(
     title="Offline Outreach Engine",
@@ -34,6 +35,7 @@ app.add_middleware(
 app.include_router(user_router, prefix="/api/users", tags=["Users"])
 app.include_router(campaign_router, prefix="/api/campaigns", tags=["Campaigns"])
 app.include_router(prospect_router, prefix="/api/prospects", tags=["Prospects"]) 
+app.include_router(llm_router, prefix="/api/llm", tags=["LLM"])
 
 @app.get("/", tags=["Health Check"])
 def root():

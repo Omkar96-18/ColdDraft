@@ -1,8 +1,11 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import api from "../api";
 
 const WritePage = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { prospectName } = location.state || {};
   
   // --- STATE MANAGEMENT ---
   const [isGenerating, setIsGenerating] = useState(false);
@@ -15,25 +18,38 @@ const WritePage = () => {
     whatsapp: ""
   });
 
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
+    if (!prospectName) {
+      alert("Prospect name is not available.");
+      return;
+    }
+
     setIsGenerating(true);
     setGenerated(false);
 
-    // Simulate AI API Latency
-    setTimeout(() => {
-      setDrafts({
-        email: {
-          subject: "Project Collaboration: Synergy with [Project Name]",
-          body: `Hi [Name],\n\nI noticed your recent work on sustainable tech architecture—it’s impressive.\n\nOur platform connects directly with the goals you mentioned in your Q3 report. I’d love to share a brief demo on how we can accelerate that timeline.\n\nAre you free next Tuesday for 10 minutes?\n\nBest,\n[Your Name]`
-        },
-        sms: "Hi [Name]! Saw the LinkedIn update. We actually just solved that exact latency issue you posted about. Free for a quick call tomorrow? - [Your Name]",
-        whatsapp: "Hey [Name]! 👋 Hope you're having a great week. I loved your recent post about AI efficiency. We actually just launched a beta that does exactly that. Would love to get your feedback if you have a sec! 🚀"
-      });
-      setIsGenerating(false);
-      setGenerated(true);
-    }, 1500);
-  };
+    try {
+      const res = await api.generateMessages(prospectName);
+      const { email, sms, whatsapp } = res.data;
+      
+      // Basic parsing for email subject and body
+      const emailLines = email.split('\n');
+      const subject = emailLines.find(line => line.toLowerCase().startsWith("subject:"))?.replace("Subject:", "").trim() || "Generated Email";
+      const body = emailLines.filter(line => !line.toLowerCase().startsWith("subject:")).join('\n').trim();
 
+      setDrafts({
+        email: { subject, body },
+        sms,
+        whatsapp
+      });
+      setGenerated(true);
+    } catch (error) {
+      console.error("Error generating messages:", error);
+      alert("Failed to generate messages. Please check the console for details.");
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+  
   return (
     <div className="min-h-screen bg-[#020202] text-zinc-200 font-sans selection:bg-blue-500/30 pb-20 relative overflow-x-hidden">
       
@@ -70,7 +86,7 @@ const WritePage = () => {
                 {/* Main Action Button (Matched Dashboard Style) */}
                 <button 
                     onClick={handleGenerate}
-                    disabled={isGenerating}
+                    disabled={isGenerating || !prospectName}
                     className="px-8 py-4 rounded-full bg-white text-black font-black text-xs uppercase tracking-[0.2em] hover:scale-105 active:scale-95 transition-all shadow-[0_0_30px_rgba(255,255,255,0.2)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                 >
                     {isGenerating ? (
@@ -80,7 +96,7 @@ const WritePage = () => {
                         </>
                     ) : (
                         <>
-                            <span>Generate Drafts</span>
+                            <span>Generate Drafts for {prospectName}</span>
                             <span className="text-lg leading-none mb-0.5">✨</span>
                         </>
                     )}

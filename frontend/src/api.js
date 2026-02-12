@@ -18,4 +18,6 @@ api.interceptors.request.use((config) => {
   return Promise.reject(error);
 });
 
+api.generateMessages = (prospectName) => api.post(`/api/llm/generate_messages/${prospectName}`);
+
 export default api;
