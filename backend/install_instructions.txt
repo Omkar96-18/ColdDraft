@@ -1,0 +1,12 @@
+To resolve the `ModuleNotFoundError`, please follow these steps in your terminal:
+
+1.  Make sure your virtual environment is activated. If not, navigate to the backend directory and activate it:
+    ```bash
+    cd D:\coding\hackathon\ColdDraft\backend
+    .\.venv\Scripts\activate
+    ```
+2.  Install the new dependencies:
+    ```bash
+    pip install -r requirements.txt
+    ```
+3.  Once the installation is complete, you can try to run the server again using the instructions I provided earlier.

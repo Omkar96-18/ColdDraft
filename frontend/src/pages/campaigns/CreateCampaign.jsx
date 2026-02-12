@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../api";
+import api from "../../api"; // Adjusted path
 
 // ... (Sidebar component remains the same) ...
 
@@ -76,6 +76,10 @@ const CreateCampaign = () => {
 
     try {
       const token = localStorage.getItem("token") || localStorage.getItem("access_token"); 
+      if (!token) {
+        navigate("/login"); // Redirect to login if no token
+        return;
+      }
       const config = { headers: { Authorization: `Bearer ${token}` } };
       await api.post("/api/campaigns/", payload, config);
       navigate("/home"); 

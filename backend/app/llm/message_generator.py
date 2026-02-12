@@ -11,6 +11,7 @@ def generate_messages(prospect_name):
     with open(prospect_file_path, "r") as f:
         data = json.load(f)
 
+<<<<<<< HEAD
     prospect_info = data.get("prospect_info", {})
     campaign_context = data.get("campaign_context", {})
 
@@ -28,6 +29,25 @@ def generate_messages(prospect_name):
     campaign_type = campaign_context.get("type", "")
     description = campaign_context.get("description", "")
     why_approaching = campaign_context.get("why_approaching", "")
+=======
+    prospect_info = data["prospect_info"]
+    campaign_context = data["campaign_context"]
+
+    name = prospect_info["name"]
+    ethnicity = prospect_info["ethnicity"]
+    profession = prospect_info["profession"]
+    age = prospect_info["age"]
+    gender = prospect_info["gender"]
+    location = prospect_info["location"]
+    interests = prospect_info["interests"]
+    socials = prospect_info["socials"]
+    context_from_post = prospect_info["context_from_post"]
+
+    campaign_name = campaign_context["campaign_name"]
+    campaign_type = campaign_context["type"]
+    description = campaign_context["description"]
+    why_approaching = campaign_context["why_approaching"]
+>>>>>>> 6415ffbef0ee404f129ff4a9eda7b660d49589a0
 
     # Initialize the LLM with the user-requested temperature
     llm = OllamaLLM(model="llama3:8b-instruct-q4_K_M", temperature=0.8)
@@ -144,6 +164,7 @@ def generate_messages(prospect_name):
         """
     )
 
+<<<<<<< HEAD
     # Generate messages
     email_message = llm.invoke(email_prompt.format(**common_input_variables)).strip()
     sms_message = llm.invoke(sms_prompt.format(**common_input_variables)).strip()
@@ -154,3 +175,26 @@ def generate_messages(prospect_name):
         "sms": sms_message,
         "whatsapp": whatsapp_message
     }
+=======
+    # Generate and print messages
+    print("--- EMAIL ---")
+    email_message = llm.invoke(email_prompt.format(**common_input_variables))
+    print(email_message.strip())
+
+    print("\n--- SMS ---")
+    sms_message = llm.invoke(sms_prompt.format(**common_input_variables))
+    print(sms_message.strip())
+
+    print("\n--- WHATSAPP ---")
+    whatsapp_message = llm.invoke(whatsapp_prompt.format(**common_input_variables))
+    print(whatsapp_message.strip())
+
+if __name__ == "__main__":
+    # Get all the prospect names from the contacts directory
+    prospect_names = os.listdir(os.path.join("app", "llm", "contacts"))
+    
+    for prospect_name in prospect_names:
+        print(f"Generating messages for {prospect_name}...")
+        generate_messages(prospect_name)
+        print("-" * 20)
+>>>>>>> 6415ffbef0ee404f129ff4a9eda7b660d49589a0

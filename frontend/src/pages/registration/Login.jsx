@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import api from "../api"; // Ensure this path points to your api.js file
+import api from "../../api"; // Adjusted path to api.js
 
 const Login = () => {
   const navigate = useNavigate();

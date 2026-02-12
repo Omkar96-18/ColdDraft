@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api";
+import api from "../../api"; // Adjusted path
 
 const ProspectDetail = () => {
   const { id } = useParams();
@@ -11,19 +11,26 @@ const ProspectDetail = () => {
   useEffect(() => {
     const fetchProspect = async () => {
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+        if (!token) {
+          navigate("/login");
+          return;
+        }
         const res = await api.get(`/api/prospects/${id}`, {
           headers: { Authorization: `Bearer ${token}` }
         });
         setProspect(res.data);
       } catch (err) {
         console.error("Error fetching prospect", err);
+        if (err.response && err.response.status === 401) {
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchProspect();
-  }, [id]);
+  }, [id, navigate]);
 
   if (loading) return (
     <div className="h-screen w-full bg-[#050505] flex items-center justify-center">

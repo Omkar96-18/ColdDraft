@@ -15,6 +15,15 @@ EMBEDDING_MODEL = HuggingFaceEmbeddings(
     encode_kwargs={'normalize_embeddings': False}
 )
 
+<<<<<<< HEAD
+=======
+# --- LangChain & Vector DB Imports ---
+from langchain_core.documents import Document
+from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_community.vectorstores import Chroma
+
+# Ensures filename is safe for file systems
+>>>>>>> 6415ffbef0ee404f129ff4a9eda7b660d49589a0
 def get_valid_filename(name):
     """Ensures filename is safe for file systems"""
     return "".join(c for c in name if c.isalnum() or c in (' ', '-', '_')).strip()
@@ -76,6 +85,7 @@ def save_prospect_json(prospect_data: dict, campaign_data):
             f"Initial context: {campaign_data.intro_context}. Target Industry: {campaign_data.target_industry}"
         )
 
+<<<<<<< HEAD
     # 6. Save the JSON File
     json_file_path = prospect_folder / "prospect.json"
     
@@ -112,5 +122,45 @@ def save_prospect_json(prospect_data: dict, campaign_data):
         
     except Exception as e:
         print(f"❌ Error creating Vector DB: {e}")
+=======
+    # 6. Write JSON File (Standard Backup)
+    json_file_path = prospect_folder / "prospect.json"
+    with open(json_file_path, 'w', encoding='utf-8') as f:
+        json.dump(llm_context, f, indent=4, ensure_ascii=False)
+        
+    # --- STEP 7: CREATE VECTOR DB ---
+    try:
+        print(f"🧠 Generating Vector Embeddings for {prospect_data['full_name']}...")
+        
+        # A. Prepare the data as a LangChain Document
+        # We dump the entire JSON context as a string so the LLM can read it all.
+        text_content = json.dumps(llm_context, indent=2)
+        doc = Document(
+            page_content=text_content, 
+            metadata={"source": str(json_file_path), "name": prospect_data['full_name']}
+        )
+
+        # B. Initialize Embedding Model
+        # using 'all-MiniLM-L6-v2' (Standard, fast, lightweight for local CPU)
+        embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+
+        # C. Define Vector DB Path inside the prospect folder
+        vector_db_path = prospect_folder / "chroma_db"
+
+        # D. Create and Persist Chroma DB
+        # This creates the 'chroma_db' folder and saves the embeddings there
+        vector_db = Chroma.from_documents(
+            documents=[doc],
+            embedding=embeddings,
+            persist_directory=str(vector_db_path)
+        )
+        
+        print(f"✅ Vector DB created at: {vector_db_path}")
+
+    except Exception as e:
+        print(f"❌ Error creating Vector DB: {e}")
+        # We don't stop the function here because the JSON was saved successfully,
+        # but you should check your console logs if embeddings fail.
+>>>>>>> 6415ffbef0ee404f129ff4a9eda7b660d49589a0
 
     return str(json_file_path)

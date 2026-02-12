@@ -1,0 +1,23 @@
+{
+    "prospect_info": {
+        "name": "amd ryzen",
+        "ethnicity": "China",
+        "profession": "a processor",
+        "age": 1000,
+        "gender": "God",
+        "location": "china",
+        "interests": "i love to process things",
+        "socials": {
+            "linkedin": "idon'thaveany.com",
+            "instagram": "IamProcessor",
+            "portfolio": "amdryzen.com"
+        },
+        "context_from_post": "i run the world"
+    },
+    "campaign_context": {
+        "campaign_name": "test",
+        "type": "sales",
+        "description": "test",
+        "why_approaching": "Selling product 'test' at 109.0. Key details: text"
+    }
+}

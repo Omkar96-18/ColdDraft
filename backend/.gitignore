@@ -30,3 +30,4 @@ Thumbs.db
 *.tmp
 *.sqlite3
 main.db
+.env

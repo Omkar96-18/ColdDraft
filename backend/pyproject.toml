@@ -5,10 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
+<<<<<<< HEAD
     "chromadb>=1.5.0",
     "fastapi>=0.128.4",
     "langchain-chroma>=1.1.0",
     "langchain-huggingface>=1.2.0",
+=======
+    "dotenv>=0.9.9",
+    "fastapi>=0.128.4",
+    "fastapi-mail>=1.6.1",
+    "pywhatkit>=5.4",
+    "twilio>=9.10.1",
+>>>>>>> 6415ffbef0ee404f129ff4a9eda7b660d49589a0
     "pydantic[email]>=2.12.5",
     "python-jose[cryptography]>=3.5.0",
     "sentence-transformers>=5.2.2",

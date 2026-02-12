@@ -40,3 +40,7 @@ package-lock.json
 *.tmp
 *.sqlite3
 main.db
+
+# Backend specific ignores from remote
+backend/backend/
+run_backend_server.txt

@@ -1,14 +1,6 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
-
-// API Configuration
-const api = axios.create({
-  baseURL: "http://127.0.0.1:8000",
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+import api from "../../api"; // Use the shared API instance
 
 const Register = () => {
   const navigate = useNavigate();
@@ -218,140 +210,153 @@ const Register = () => {
                     Email
                   </label>
                   <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                    placeholder="email@example.com"
-                    className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">
-                      Password
-                    </label>
-                    <input
-                      type="password"
-                      name="password"
-                      value={formData.password}
+                      type="email"
+                      name="email"
+                      value={formData.email}
                       onChange={handleChange}
                       required
-                      placeholder="••••••••"
+                      placeholder="email@example.com"
                       className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
                     />
                   </div>
-                  <div className="space-y-1">
-                    <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">
-                      Confirm
-                    </label>
-                    <input
-                      type="password"
-                      name="confirm_password"
-                      value={formData.confirm_password}
-                      onChange={handleChange}
-                      required
-                      placeholder="••••••••"
-                      className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
-                    />
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">
+                        Password
+                      </label>
+                      <input
+                        type="password"
+                        name="password"
+                        value={formData.password}
+                        onChange={handleChange}
+                        required
+                        placeholder="••••••••"
+                        className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
+                      />
+                    </div>
+                    <div className="space-y-1">
+                      <label className="text-[10px] uppercase tracking-widest text-gray-500 font-bold ml-1">
+                        Confirm
+                      </label>
+                      <input
+                        type="password"
+                        name="confirm_password"
+                        value={formData.confirm_password}
+                        onChange={handleChange}
+                        required
+                        placeholder="••••••••"
+                        className="w-full rounded-xl px-4 py-3 bg-white/[0.03] text-white border border-white/10 placeholder:text-gray-600 focus:outline-none focus:border-white/20 focus:bg-white/[0.05] transition-all"
+                      />
+                    </div>
                   </div>
-                </div>
 
-                {/* GLASS SUBMIT BUTTON */}
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="
-                    w-full mt-6 py-3.5 rounded-xl
-                    bg-white/10 backdrop-blur-md
-                    border border-white/20
-                    text-white font-bold tracking-wide
-                    hover:bg-white/20 hover:border-white/30
-                    active:scale-[0.98]
-                    transition-all duration-200
-                    shadow-[0_0_30px_rgba(255,255,255,0.05)]
-                  "
-                >
-                  {loading ? "Processing..." : "Create Account"}
-                </button>
-              </form>
-
-              {/* Footer Links */}
-              <div className="mt-8 text-center">
-                <p className="text-sm text-gray-500">
-                  Already registered?{" "}
-                  <Link
-                    to="/login"
-                    className="text-white hover:text-purple-300 transition-colors font-medium border-b border-white/20 hover:border-purple-300"
+                  {/* GLASS SUBMIT BUTTON */}
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="
+                      w-full mt-6 py-3.5 rounded-xl
+                      bg-white/10 backdrop-blur-md
+                      border border-white/20
+                      text-white font-bold tracking-wide
+                      hover:bg-white/20 hover:border-white/30
+                      active:scale-[0.98]
+                      transition-all duration-200
+                      shadow-[0_0_30px_rgba(255,255,255,0.05)]
+                    "
                   >
-                    Login here
-                  </Link>
-                </p>
+                    {loading ? "Processing..." : "Create Account"}
+                  </button>
+                </form>
+
+                {/* Footer Links */}
+                <div className="mt-8 text-center">
+                  <p className="text-sm text-gray-500">
+                    Already registered?{" "}
+                    <Link
+                      to="/login"
+                      className="text-white hover:text-purple-300 transition-colors font-medium border-b border-white/20 hover:border-purple-300"
+                    >
+                      Login here
+                    </Link>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* =======================
-            RIGHT PANEL: "Neural Network" Visual
-            ======================= */}
-        {/* Added p-12 to ensure content never touches the edges */}
-        <div className="hidden lg:flex lg:w-[55%] h-screen flex-col items-center justify-center relative bg-black p-12">
-          {/* Constellation Container - SCALED DOWN slightly to fix bottom collision */}
-          <div className="relative w-full max-w-[420px] aspect-square flex items-center justify-center">
-            {/* CONNECTION LINES (SVG) */}
-            <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
-              <defs>
-                <linearGradient
-                  id="lineGradient"
-                  x1="0%"
-                  y1="0%"
-                  x2="100%"
-                  y2="100%"
-                >
-                  <stop offset="0%" stopColor="transparent" />
-                  <stop offset="50%" stopColor="#a855f7" /> {/* Purple-500 */}
-                  <stop offset="100%" stopColor="transparent" />
-                </linearGradient>
-              </defs>
-              <line
-                x1="50%"
-                y1="50%"
-                x2="20%"
-                y2="30%"
-                stroke="url(#lineGradient)"
-                strokeWidth="1"
-              />
-              <line
-                x1="50%"
-                y1="50%"
-                x2="80%"
-                y2="25%"
-                stroke="url(#lineGradient)"
-                strokeWidth="1"
-              />
-              <line
-                x1="50%"
-                y1="50%"
-                x2="75%"
-                y2="75%"
-                stroke="url(#lineGradient)"
-                strokeWidth="1"
-              />
-              <line
-                x1="50%"
-                y1="50%"
-                x2="25%"
-                y2="70%"
-                stroke="url(#lineGradient)"
-                strokeWidth="1"
-              />
-            </svg>
+          {/* =======================
+              RIGHT PANEL: "Neural Network" Visual
+              ======================= */}
+          {/* Added p-12 to ensure content never touches the edges */}
+          <div className="hidden lg:flex lg:w-[55%] h-screen flex-col items-center justify-center relative bg-black p-12">
+            {/* Constellation Container - SCALED DOWN slightly to fix bottom collision */}
+            <div className="relative w-full max-w-[420px] aspect-square flex items-center justify-center">
+              {/* CONNECTION LINES (SVG) */}
+              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-20">
+                <defs>
+                  <linearGradient
+                    id="lineGradient"
+                    x1="0%"
+                    y1="0%"
+                    x2="100%"
+                    y2="100%"
+                  >
+                    <stop offset="0%" stopColor="transparent" />
+                    <stop offset="50%" stopColor="#a855f7" /> {/* Purple-500 */}
+                    <stop offset="100%" stopColor="transparent" />
+                  </linearGradient>
+                </defs>
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="20%"
+                  y2="30%"
+                  stroke="url(#lineGradient)"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="80%"
+                  y1="25%"
+                  stroke="url(#lineGradient)"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="75%"
+                  y1="75%"
+                  stroke="url(#lineGradient)"
+                  strokeWidth="1"
+                />
+                <line
+                  x1="50%"
+                  y1="50%"
+                  x2="25%"
+                  y1="70%"
+                  stroke="url(#lineGradient)"
+                  strokeWidth="1"
+                />
+              </svg>
 
-            {/* ORBITAL RINGS - REDUCED SIZES (420px, 280px, 160px) */}
-            <div className="absolute w-[420px] h-[420px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
+              {/* ORBITAL RINGS - REDUCED SIZES (420px, 280px, 160px) */}
+              <div className="absolute w-[420px] h-[420px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
+              <div className="absolute w-[280px] h-[280px] border border-white/10 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
+              <div className="absolute w-[160px] h-[160px] border border-dashed border-white/20 rounded-full animate-[spin_20s_linear_infinite]" />
+
+              {/* CENTER CORE */}
+              <div className="relative z-20 w-20 h-20 bg-black/80 backdrop-blur-xl border border-white/20 rounded-2xl flex items-center justify-center shadow-[0_0_50px_rgba(168,85,247,0.4)]">
+                <div className="w-10 h-10 bg-gradient-to-tr from-purple-500 to-indigo-500 rounded-lg blur-sm absolute opacity-60 animate-pulse" />
+                <div className="relative z-10 w-8 h-8 bg-white rounded-md flex items-center justify-center">
+                  <div className="w-4 h-4 bg-black rounded-sm" />
+                </div>
+              </div>
+
+              {/* SATELLITE NODES */}
+              <div className="absolute w-[420px] h-[420px] border border-white/5 rounded-full animate-[spin_60s_linear_infinite]" />
             <div className="absolute w-[280px] h-[280px] border border-white/10 rounded-full animate-[spin_40s_linear_infinite_reverse]" />
             <div className="absolute w-[160px] h-[160px] border border-dashed border-white/20 rounded-full animate-[spin_20s_linear_infinite]" />
 

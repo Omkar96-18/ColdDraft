@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../api";
+import api from "../../api"; // Adjusted path
 
 const CampaignDetail = () => {
   const { id } = useParams();
@@ -37,6 +37,10 @@ const CampaignDetail = () => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+        if (!token) {
+          navigate("/login"); // Redirect to login if no token
+          return;
+        }
         const config = { headers: { Authorization: `Bearer ${token}` } };
         
         const [campRes, prosRes] = await Promise.all([
@@ -48,12 +52,16 @@ const CampaignDetail = () => {
         setProspects(prosRes.data);
       } catch (err) {
         console.error("Error fetching data", err);
+        // Handle specific errors like 401 Unauthorized
+        if (err.response && err.response.status === 401) {
+          navigate("/login");
+        }
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [id]);
+  }, [id, navigate]); // Added navigate to dependency array
 
   // --- HANDLERS ---
   const handleInputChange = (e) => {
@@ -65,6 +73,10 @@ const CampaignDetail = () => {
     setFormLoading(true);
     try {
         const token = localStorage.getItem("token") || localStorage.getItem("access_token");
+        if (!token) {
+          navigate("/login"); // Redirect to login if no token
+          return;
+        }
         const config = { headers: { Authorization: `Bearer ${token}` } };
         
         const payload = {
@@ -98,6 +110,9 @@ const CampaignDetail = () => {
     } catch (err) {
         console.error("Failed to create prospect", err);
         alert("Failed to create prospect. Check console.");
+        if (err.response && err.response.status === 401) {
+          navigate("/login");
+        }
     } finally {
         setFormLoading(false);
     }
@@ -194,7 +209,7 @@ const CampaignDetail = () => {
              <div className="md:col-span-5 p-8 rounded-3xl border border-dashed border-white/10 flex items-center justify-center bg-white/[0.01]">
                 <div className="text-center">
                     <span className="text-2xl mb-2 block opacity-50">👥</span>
-                    <span className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">{prospects.length} Prospects</span>
+                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">{prospects.length} Prospects</span>
                 </div>
             </div>
         </div>
