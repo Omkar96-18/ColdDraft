@@ -56,3 +56,62 @@
 * Upload a CSV file with 100 LinkedIn URL's (batch processing) and create an entire outreach campaign with a single button click.
 
 * Establish a "Mark As Successful" button, so that once we receive a response to the outbound campaign (the person replies), that the sent message will be saved into ChromaDB to assist in refining future RAG results based off previous successes.
+
+<br>
+
+# Have some glimpses about UI / UX.
+
+## Registration Page
+
+<img src="./screenshots/register.jpeg" alt="Registration Page">
+
+## Login Page
+
+<img src="./screenshots/login.jpeg" alt="Login Page">
+
+## Home Page
+
+<img src="./screenshots/home.jpeg" alt="Home Page">
+
+## Campaign Page
+
+<img src="./screenshots/create_campaign.jpeg" alt="Registration Page">
+
+## Client Info Page
+
+<img src="./screenshots/campaign.jpeg" alt="Campaign Page">
+
+## Hub Page
+
+<img src="./screenshots/hub.jpeg" alt="Hub Page">
+
+<br>
+
+# Project build by XATHONER
+
+<img src="./screenshots/image.png" alt="Team Image" height='520px' width="700px">
+
+## All Members from Xathoner Team:
+
+### Sahil Dinkar Katurde
+Social Links: 
+* Github: https://github.com/SahilKaturde
+* LinkedIn: https://www.linkedin.com/in/sahil-katurde-b26690345/
+* Email: ahilkaturde1@gmail.com
+* Portfolio: https://sahilkaturde.netlify.app/
+
+### Omkar Amit Pardeshi 
+Social Links: 
+* Github: https://github.com/Omkar96-18
+* Email: omkarp.0906@gmail.com
+### Atharva Amol Kulkarni
+Social Links: 
+* Github: https://github.com/Atharva-kul
+* LinkedIn: https://www.linkedin.com/in/atharva-kulkarni-a1843829b/
+* Email: 
+### Khetaram Suthar
+Social Links: 
+* Github: https://github.com/Ksuthar99
+* LinkedIn: https://www.linkedin.com/in/k-s-a36105338/
+* Email: ss1940454@gmail.com
+
