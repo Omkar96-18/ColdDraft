@@ -29,4 +29,4 @@ Thumbs.db
 *.log
 *.tmp
 *.sqlite3
-main.dbmain.db
+main.db
